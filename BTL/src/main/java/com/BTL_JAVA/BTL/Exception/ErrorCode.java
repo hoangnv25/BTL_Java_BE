@@ -18,6 +18,7 @@ public enum ErrorCode {
      UNAUTHENTICATED(1006, "Unauthenticated",HttpStatus.UNAUTHORIZED),
      UNAUTHORIZED(1007, "Khong co quyen truy cap",HttpStatus.FORBIDDEN),
      INVALID_DOB(1008, "You age must be at leats {min}",HttpStatus.BAD_REQUEST),
+     REVIEW_NOT_FOUND(1009, "Review is not exists", HttpStatus.NOT_FOUND)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

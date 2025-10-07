@@ -1,14 +1,9 @@
 package com.BTL_JAVA.BTL.configuration;
 
-
-
-
-
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import com.BTL_JAVA.BTL.enums.Role;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
