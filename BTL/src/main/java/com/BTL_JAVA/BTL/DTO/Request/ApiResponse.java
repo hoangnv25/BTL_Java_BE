@@ -16,4 +16,27 @@ public class ApiResponse<T> {
      int code=1000;
      String message;
      T result;
+
+     public static <T> ApiResponse<T> ok(T data) {
+          return ApiResponse.<T>builder()
+                  .code(1000)
+                  .message("Success")
+                  .result(data)
+                  .build();
+     }
+
+     public static <T> ApiResponse<T> ok(T data, String msg) {
+          return ApiResponse.<T>builder()
+                  .code(1000)
+                  .message(msg)
+                  .result(data)
+                  .build();
+     }
+
+     public static <T> ApiResponse<T> error(int code, String msg) {
+          return ApiResponse.<T>builder()
+                  .code(code)
+                  .message(msg)
+                  .build();
+     }
 }

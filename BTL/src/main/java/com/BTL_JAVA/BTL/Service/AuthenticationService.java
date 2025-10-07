@@ -3,6 +3,7 @@ package com.BTL_JAVA.BTL.Service;
 import com.BTL_JAVA.BTL.DTO.Request.AuthenticationRequest;
 import com.BTL_JAVA.BTL.DTO.Request.IntrospectRequest;
 import com.BTL_JAVA.BTL.DTO.Request.LogoutRequest;
+import com.BTL_JAVA.BTL.DTO.Request.RefreshRequest;
 import com.BTL_JAVA.BTL.DTO.Response.AuthenticationResponse;
 import com.BTL_JAVA.BTL.DTO.Response.IntrospectResponse;
 import com.BTL_JAVA.BTL.Entity.InvalidtedToken;
@@ -49,11 +50,19 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     protected  String SIGNER_KEY;
 
+    @NonFinal
+    @Value("${jwt.valid-duration}")
+    protected  long VALIDATION_DURATION;
+
+    @NonFinal
+    @Value("${jwt.refresh-duration}")
+    protected  long REFRESH_DURATION;
+
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token=request.getToken();
 
        try {
-           verifyToken(token);
+           verifyToken(token,false);
        }catch (AppException e){
            return IntrospectResponse.builder()
                    .valid(false)
@@ -85,10 +94,29 @@ public class AuthenticationService {
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
-         var signToken = verifyToken(request.getToken());
+        try {
+            var signToken = verifyToken(request.getToken(), true);
 
-         String jit=signToken.getJWTClaimsSet().getJWTID();
-         Date expiryTime=signToken.getJWTClaimsSet().getExpirationTime();
+            String jit=signToken.getJWTClaimsSet().getJWTID();
+            Date expiryTime=signToken.getJWTClaimsSet().getExpirationTime();
+
+            InvalidtedToken invalidtedToken=InvalidtedToken.builder()
+                    .id(jit)
+                    .expỉyTime(expiryTime)
+                    .build();
+            invalidtedTokenRepository.save(invalidtedToken);
+        }catch (AppException e){
+            log.info("Token already expired");
+        }
+
+    }
+
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+
+        var signToken = verifyToken(request.getToken(),true);
+
+        String jit=signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime=signToken.getJWTClaimsSet().getExpirationTime();
 
         InvalidtedToken invalidtedToken=InvalidtedToken.builder()
                 .id(jit)
@@ -96,14 +124,28 @@ public class AuthenticationService {
                 .build();
         invalidtedTokenRepository.save(invalidtedToken);
 
+
+        var username=signToken.getJWTClaimsSet().getSubject();
+
+        var user=userRepository.findByFullName(username).orElseThrow(() ->new AppException(ErrorCode.UNAUTHENTICATED));
+
+        var token= generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+
     }
 
-    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+    private SignedJWT verifyToken(String token,boolean isRefrseh) throws JOSEException, ParseException {
         JWSVerifier verifier= new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT=SignedJWT.parse(token);
 
-        Date expityTime= signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expityTime=(isRefrseh)
+                ?new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(REFRESH_DURATION,ChronoUnit.SECONDS).toEpochMilli())
+                :signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verify= signedJWT.verify(verifier);
 
@@ -125,7 +167,7 @@ public class AuthenticationService {
                 .issuer("devteira.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(VALIDATION_DURATION, ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope",buildScope(user))

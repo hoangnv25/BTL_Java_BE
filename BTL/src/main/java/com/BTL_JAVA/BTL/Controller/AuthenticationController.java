@@ -1,9 +1,6 @@
 package com.BTL_JAVA.BTL.Controller;
 
-import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.AuthenticationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.IntrospectRequest;
-import com.BTL_JAVA.BTL.DTO.Request.LogoutRequest;
+import com.BTL_JAVA.BTL.DTO.Request.*;
 import com.BTL_JAVA.BTL.DTO.Response.AuthenticationResponse;
 import com.BTL_JAVA.BTL.DTO.Response.IntrospectResponse;
 import com.BTL_JAVA.BTL.Service.AuthenticationService;
@@ -46,6 +43,14 @@ public class AuthenticationController {
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result=authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
                 .build();
     }
 
