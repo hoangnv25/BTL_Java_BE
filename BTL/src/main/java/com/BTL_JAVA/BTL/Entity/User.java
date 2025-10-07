@@ -1,9 +1,11 @@
 package com.BTL_JAVA.BTL.Entity;
 
+import com.BTL_JAVA.BTL.Entity.Product.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -46,5 +48,10 @@ public class User {
                     inverseJoinColumns = @JoinColumn(name = "name_roles")
             )
     Set<Role> roles;
+
+    @OneToMany(mappedBy = "user",
+    fetch = FetchType.LAZY,
+    cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
+    List<Cart> carts;
 
 }
