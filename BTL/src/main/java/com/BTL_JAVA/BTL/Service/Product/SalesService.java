@@ -79,7 +79,6 @@ public class SalesService {
             }
 
             return ApiResponse.<SalesResponse>builder()
-                    .code(1000).message("Success")
                     .result(toResponse(saved, isActive))
                     .build();
         } catch (AppException e) {
