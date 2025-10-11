@@ -18,7 +18,14 @@ public enum ErrorCode {
      UNAUTHENTICATED(1006, "Unauthenticated",HttpStatus.UNAUTHORIZED),
      UNAUTHORIZED(1007, "Khong co quyen truy cap",HttpStatus.FORBIDDEN),
      INVALID_DOB(1008, "You age must be at leats {min}",HttpStatus.BAD_REQUEST),
-     REVIEW_NOT_FOUND(1009, "Review is not exists", HttpStatus.NOT_FOUND)
+     REVIEW_NOT_FOUND(1009, "Review is not exists", HttpStatus.NOT_FOUND),
+     INVALID_VARIATION(1010,"Variation is invalid",HttpStatus.BAD_REQUEST),
+     DUPLICATE_VARIATION(1011,"Duplicate variation",HttpStatus.BAD_REQUEST),
+     VARIATION_NOT_FOUND(1012,"Variation is not exists",HttpStatus.NOT_FOUND),
+     CATEGORY_NOT_FOUND  (1013,"Category is not exists",HttpStatus.NOT_FOUND),
+     PRODUCT_NOT_FOUND(1014,"Product is not exists",HttpStatus.NOT_FOUND),
+     PRODUCT_EXISTED(1013,"Product already exists",HttpStatus.BAD_REQUEST),
+     VARIATION_EXISTED(1014,"Variation already exists",HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
