@@ -123,7 +123,6 @@ public class SalesService {
             }
 
             return ApiResponse.<SalesResponse>builder()
-                    .code(1000).message("Success")
                     .result(toResponse(saved, isActive))
                     .build();
         } catch (AppException e) {
@@ -147,7 +146,6 @@ public class SalesService {
             salesRepository.delete(sale);
 
             return ApiResponse.<Void>builder()
-                    .code(1000).message("Deleted")
                     .result(null)
                     .build();
         } catch (AppException e) {
