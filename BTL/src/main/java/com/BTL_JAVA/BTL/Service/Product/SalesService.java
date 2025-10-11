@@ -49,7 +49,6 @@ public class SalesService {
             }
 
             return ApiResponse.<List<SalesResponse>>builder()
-                    .code(1000).message("Success")
                     .result(salesResponses)
                     .build();
         } catch (Exception e) {
