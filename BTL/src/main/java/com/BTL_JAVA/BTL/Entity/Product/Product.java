@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -41,5 +42,6 @@ public class Product {
                fetch = FetchType.LAZY,
     cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     private List<ProductVariation> productVariations;
-
+    @ManyToMany(mappedBy = "products")
+    private List<Sales> sales;
 }
