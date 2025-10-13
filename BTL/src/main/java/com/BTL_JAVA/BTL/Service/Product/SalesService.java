@@ -89,31 +89,47 @@ public class SalesService {
     }
 
     @Transactional
-    public ApiResponse<SalesResponse> update(SalesUpdateRequest request) {
+    public ApiResponse<SalesResponse> update(Integer id,SalesUpdateRequest request) {
         try {
-            Sales sale = salesRepository.findById(request.getId())
+            Sales sale = salesRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
 
-            if (request.getName() != null) sale.setName(request.getName());
+            // CHỈ UPDATE NHỮNG FIELD ĐƯỢC GỬI TRONG REQUEST
+            if (request.getName() != null) {
+                sale.setName(request.getName());
+            }
+
             if (request.getValue() != null) {
                 validateSaleValue(request.getValue());
                 sale.setValue(request.getValue());
             }
-            if (request.getStDate() != null) sale.setStDate(request.getStDate());
-            if (request.getEndDate() != null) sale.setEndDate(request.getEndDate());
 
-            if (request.getStDate() != null && request.getEndDate() != null) {
-                validateSaleDates(request.getStDate(), request.getEndDate());
+            if (request.getStDate() != null) {
+                sale.setStDate(request.getStDate());
             }
 
-            boolean isActive = calculateActiveStatus(
-                    request.getStDate() != null ? request.getStDate() : sale.getStDate(),
-                    request.getEndDate() != null ? request.getEndDate() : sale.getEndDate()
-            );
+            if (request.getEndDate() != null) {
+                sale.setEndDate(request.getEndDate());
+            }
+
+            // VALIDATE DATES NẾU CẢ HAI ĐƯỢC GỬI
+            if (request.getStDate() != null && request.getEndDate() != null) {
+                validateSaleDates(request.getStDate(), request.getEndDate());
+            } else if (request.getStDate() != null) {
+                validateSaleDates(request.getStDate(), sale.getEndDate());
+            } else if (request.getEndDate() != null) {
+                validateSaleDates(sale.getStDate(), request.getEndDate());
+            }
+
+            // TÍNH LẠI ACTIVE STATUS
+            LocalDateTime newStDate = request.getStDate() != null ? request.getStDate() : sale.getStDate();
+            LocalDateTime newEndDate = request.getEndDate() != null ? request.getEndDate() : sale.getEndDate();
+            boolean isActive = calculateActiveStatus(newStDate, newEndDate);
             sale.setActive(isActive);
 
             Sales saved = salesRepository.save(sale);
 
+            // THÊM/XÓA PRODUCTS NẾU ĐƯỢC GỬI
             if (request.getAddProductIds() != null && !request.getAddProductIds().isEmpty()) {
                 addProductsToSale(saved.getId(), request.getAddProductIds());
             }

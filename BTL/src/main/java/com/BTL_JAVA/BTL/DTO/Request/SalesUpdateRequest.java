@@ -14,7 +14,6 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalesUpdateRequest {
-    Integer id;
     String name;
     BigDecimal value;
     LocalDateTime stDate;

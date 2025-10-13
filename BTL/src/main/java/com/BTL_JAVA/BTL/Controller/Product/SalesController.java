@@ -36,10 +36,11 @@ public class SalesController {
     }
 
     // PUT /sales
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<SalesResponse>> updateSale(
+            @PathVariable Integer id,
             @RequestBody SalesUpdateRequest request) {
-        return ResponseEntity.ok(salesService.update(request));
+        return ResponseEntity.ok(salesService.update(id, request));  // TRUYỀN id RIÊNG
     }
 
     // DELETE /sales/{id}
