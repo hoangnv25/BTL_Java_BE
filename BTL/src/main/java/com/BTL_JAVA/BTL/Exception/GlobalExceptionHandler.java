@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     private static final String MAX_ATTRIBUTE = "max";
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handleException(RuntimeException ex){
+    ResponseEntity<ApiResponse> handleException(Exception ex){
        ApiResponse response = new ApiResponse<>();
 
        response.setMessage(ErrorCode.UNCATEGORIED_EXCEPTION.getMessage());
@@ -34,13 +34,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handleAppExcrptin(AppException ex){
         ErrorCode errorCode=ex.getErrorCode();
-        ApiResponse response = new ApiResponse<>();
-        response.setMessage(errorCode.getMessage());
-        response.setCode(errorCode.getCode());
+//        ApiResponse response = new ApiResponse<>();
+//        response.setMessage(errorCode.getMessage());
+//        response.setCode(errorCode.getCode());
+//
+//        return ResponseEntity
+//                .status(errorCode.getStatusCode())
+//                .body(response);\
+        // Ưu tiên dùng message cụ thể từ exception; nếu rỗng thì dùng message mặc định của ErrorCode
+        String message = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : errorCode.getMessage();
 
         return ResponseEntity
                 .status(errorCode.getStatusCode())
-                .body(response);
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(message)
+                        .build());
     }
 
 

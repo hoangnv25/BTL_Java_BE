@@ -6,6 +6,8 @@ import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
 import com.BTL_JAVA.BTL.DTO.Request.CategoryCreationRequest;
 import com.BTL_JAVA.BTL.DTO.Response.CategoryResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Category;
+import com.BTL_JAVA.BTL.Exception.AppException;
+import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.CategoryRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
@@ -51,7 +53,7 @@ public class CategoryService {
               Set<Integer> found = prods.stream().map(Product::getProductId).collect(Collectors.toSet());
               Set<Integer> missing = ids.stream().filter(i -> !found.contains(i)).collect(Collectors.toSet());
               if (!missing.isEmpty()) {
-                  throw new RuntimeException("Product không tồn tại: " + missing);
+                  throw new AppException(ErrorCode.PRODUCT_NOT_FOUND,"Product không tồn tại: " + missing);
               }
               // BÊN SỞ HỮU QUAN HỆ là Product -> setCategory
               prods.forEach(p -> p.setCategory(saved));
@@ -64,11 +66,11 @@ public class CategoryService {
 
     public ApiResponse<Void> delete(Integer id) {
         Category cat = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // Không cho xoá khi còn sản phẩm
         if (cat.getProducts() != null && !cat.getProducts().isEmpty()) {
-            throw new RuntimeException("Không thể xoá: vẫn còn sản phẩm thuộc category này");
+            throw new AppException(ErrorCode.PRODUCT_EXISTED);
         }
 
         categoryRepository.delete(cat);
@@ -77,7 +79,7 @@ public class CategoryService {
 
     public ApiResponse<CategoryResponse> get(Integer id) {
         Category c = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Set<Integer> productIds = (c.getProducts() == null)
                 ? Set.of()
@@ -101,7 +103,7 @@ public class CategoryService {
 
     public ApiResponse<CategoryResponse> update(Integer id, CategoryUpdateRequest request) throws IOException {
         Category cat = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         if (request.getCategoryName() != null) cat.setName(request.getCategoryName());
         if (request.getPerentId() != null)     cat.setParent_id(request.getPerentId());
@@ -116,7 +118,7 @@ public class CategoryService {
             var found = prodsToAdd.stream().map(Product::getProductId).collect(Collectors.toSet());
             var missing = request.getAddProductIds().stream().filter(id2 -> !found.contains(id2)).toList();
             if (!missing.isEmpty()) {
-                throw new RuntimeException("Product không tồn tại: " + missing);
+                throw new AppException(ErrorCode.PRODUCT_NOT_FOUND,"Product không tồn tại: " + missing);
             }
             prodsToAdd.forEach(p -> p.setCategory(cat));  // gán về category này
             productRepository.saveAll(prodsToAdd);
