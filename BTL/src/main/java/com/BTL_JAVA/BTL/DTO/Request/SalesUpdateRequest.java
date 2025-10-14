@@ -17,6 +17,7 @@ public class SalesUpdateRequest {
     String description;
     LocalDateTime stDate;
     LocalDateTime endDate;
-    List<ProductSaleItemRequest> products;
+    List<ProductSaleItemRequest> addProducts;
+    List<Integer> removeProductIds;
 }
 

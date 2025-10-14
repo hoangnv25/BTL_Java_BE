@@ -70,7 +70,7 @@ public class SalesService {
 
             Sales sale = Sales.builder()
                     .name(request.getName())
-                    .description(request.getDescription() != null ? request.getDescription() : "") // XỬ LÝ NULL
+                    .description(request.getDescription() != null ? request.getDescription() : "")
                     .stDate(request.getStDate())
                     .endDate(request.getEndDate())
                     .active(isActive)
@@ -103,23 +103,25 @@ public class SalesService {
             // VALIDATE DATES
             if (request.getStDate() != null && request.getEndDate() != null) {
                 validateSaleDates(request.getStDate(), request.getEndDate());
-            } else if (request.getStDate() != null) {
-                validateSaleDates(request.getStDate(), sale.getEndDate());
-            } else if (request.getEndDate() != null) {
-                validateSaleDates(sale.getStDate(), request.getEndDate());
             }
 
             // TÍNH LẠI ACTIVE STATUS
-            LocalDateTime newStDate = request.getStDate() != null ? request.getStDate() : sale.getStDate();
-            LocalDateTime newEndDate = request.getEndDate() != null ? request.getEndDate() : sale.getEndDate();
-            boolean isActive = calculateActiveStatus(newStDate, newEndDate);
+            boolean isActive = calculateActiveStatus(
+                    request.getStDate() != null ? request.getStDate() : sale.getStDate(),
+                    request.getEndDate() != null ? request.getEndDate() : sale.getEndDate()
+            );
             sale.setActive(isActive);
 
             Sales saved = salesRepository.save(sale);
 
-            // XỬ LÝ PRODUCTS VỚI VALUE RIÊNG
-            if (request.getProducts() != null && !request.getProducts().isEmpty()) {
-                updateProductsInSale(saved, request.getProducts());
+            // XỬ LÝ XÓA PRODUCTS
+            if (request.getRemoveProductIds() != null && !request.getRemoveProductIds().isEmpty()) {
+                removeProductsFromSale(saved, request.getRemoveProductIds());
+            }
+
+            // XỬ LÝ THÊM PRODUCTS MỚI
+            if (request.getAddProducts() != null && !request.getAddProducts().isEmpty()) {
+                addProductsToSale(saved, request.getAddProducts());
             }
 
             return ApiResponse.<SalesResponse>builder()
@@ -137,8 +139,6 @@ public class SalesService {
         try {
             Sales sale = salesRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
-
-            // XÓA TẤT CẢ ProductSale TRƯỚC KHI XÓA SALE
             if (!sale.getProductSales().isEmpty()) {
                 productSaleRepository.deleteAll(sale.getProductSales());
             }
@@ -155,27 +155,46 @@ public class SalesService {
         }
     }
 
-    private void updateProductsInSale(Sales sale, List<ProductSaleItemRequest> productItems) {
-        // XÓA TẤT CẢ PRODUCTS CŨ
-        productSaleRepository.deleteAll(sale.getProductSales());
-        sale.getProductSales().clear();
+    private void addProductsToSale(Sales sale, List<ProductSaleItemRequest> addProducts) {
+        for (ProductSaleItemRequest item : addProducts) {
+            boolean alreadyExists = sale.getProductSales().stream()
+                    .filter(ps -> ps.getProduct() != null)
+                    .anyMatch(ps -> item.getProductId().equals(ps.getProduct().getProductId()));
 
-        // THÊM PRODUCTS MỚI VỚI VALUE RIÊNG
-        for (ProductSaleItemRequest item : productItems) {
-            Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            if (alreadyExists) {
+                ProductSale existing = sale.getProductSales().stream()
+                        .filter(ps -> ps.getProduct() != null)
+                        .filter(ps -> item.getProductId().equals(ps.getProduct().getProductId()))
+                        .findFirst()
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_IN_SALE));
+                existing.setSaleValue(item.getValue());
+            } else {
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
-            // VALIDATE SALE VALUE
-            validateSaleValue(item.getValue());
+                validateSaleValue(item.getValue());
 
-            ProductSale productSale = ProductSale.builder()
-                    .sale(sale)
-                    .product(product)
-                    .saleValue(item.getValue())
-                    .build();
+                ProductSale productSale = ProductSale.builder()
+                        .sale(sale)
+                        .product(product)
+                        .saleValue(item.getValue())
+                        .build();
 
-            productSaleRepository.save(productSale);
-            sale.getProductSales().add(productSale);
+                productSaleRepository.save(productSale);
+                sale.getProductSales().add(productSale);
+            }
+        }
+    }
+
+    private void removeProductsFromSale(Sales sale, List<Integer> removeProductIds) {
+        List<ProductSale> toRemove = sale.getProductSales().stream()
+                .filter(ps -> ps.getProduct() != null)
+                .filter(ps -> removeProductIds.contains(ps.getProduct().getProductId()))
+                .collect(Collectors.toList());
+
+        if (!toRemove.isEmpty()) {
+            productSaleRepository.deleteAll(toRemove);
+            sale.getProductSales().removeAll(toRemove);
         }
     }
 
@@ -197,12 +216,10 @@ public class SalesService {
     }
 
     private SalesResponse toResponse(Sales sales, boolean isActive) {
-        // XỬ LÝ AN TOÀN CHO SALE MỚI TẠO (CHƯA CÓ PRODUCTS)
         List<ProductSaleItemResponse> productItems = (sales.getProductSales() == null || sales.getProductSales().isEmpty())
                 ? List.of()  // TRẢ VỀ MẢNG RỖNG CHO SALE MỚI
                 : sales.getProductSales().stream()
                 .map(productSale -> {
-                    // KIỂM TRA NULL CHO product VÀ saleValue
                     if (productSale.getProduct() == null || productSale.getSaleValue() == null) {
                         return ProductSaleItemResponse.builder()
                                 .id(0)
