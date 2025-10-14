@@ -42,6 +42,6 @@ public class Product {
                fetch = FetchType.LAZY,
     cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     private List<ProductVariation> productVariations;
-    @ManyToMany(mappedBy = "products")
-    private List<Sales> sales;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductSale> productSales = new ArrayList<>();
 }

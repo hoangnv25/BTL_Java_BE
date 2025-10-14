@@ -25,10 +25,8 @@ public class Sales {
 
     @Column(name = "name", length = 100, nullable = false)
     String name;
-
-    @Column(name = "value", precision = 10, scale = 2, nullable = false)
-    BigDecimal value;
-
+    @Column(name = "description", length = 300, nullable = false)
+    String description;
     @Column(name = "st_date", nullable = false)
     LocalDateTime stDate;
 
@@ -37,13 +35,6 @@ public class Sales {
 
     @Column(name = "active", nullable = false)
     boolean active = true;
-
-    // Quan hệ Many-to-Many với Product
-    @ManyToMany
-    @JoinTable(
-            name = "product_sales",
-            joinColumns = @JoinColumn(name = "sale_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ProductSale> productSales = new ArrayList<>();
 }

@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -16,9 +17,9 @@ import java.util.Set;
 public class SalesResponse {
     Integer id;
     String name;
-    BigDecimal value;
+    String description;
     LocalDateTime stDate;
     LocalDateTime endDate;
     Boolean active;
-    Set<Integer> productIds;
+    List<ProductSaleItemResponse> list_product;
 }

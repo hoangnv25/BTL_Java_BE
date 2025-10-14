@@ -17,9 +17,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalesCreationRequest {
     String name;
-    BigDecimal value;
+    String description;
     LocalDateTime stDate;
     LocalDateTime endDate;
-    Boolean active;
-    Set<Integer> productIds;
 }

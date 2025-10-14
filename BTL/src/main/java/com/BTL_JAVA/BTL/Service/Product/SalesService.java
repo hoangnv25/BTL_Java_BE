@@ -3,11 +3,15 @@ package com.BTL_JAVA.BTL.Service.Product;
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
 import com.BTL_JAVA.BTL.DTO.Request.SalesCreationRequest;
 import com.BTL_JAVA.BTL.DTO.Request.SalesUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductSaleItemRequest;
 import com.BTL_JAVA.BTL.DTO.Response.SalesResponse;
+import com.BTL_JAVA.BTL.DTO.Response.ProductSaleItemResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Sales;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
+import com.BTL_JAVA.BTL.Entity.Product.ProductSale;
 import com.BTL_JAVA.BTL.Repository.SalesRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
+import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -17,9 +21,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +34,7 @@ public class SalesService {
 
     SalesRepository salesRepository;
     ProductRepository productRepository;
+    ProductSaleRepository productSaleRepository;
 
     public ApiResponse<List<SalesResponse>> getAllSales(Boolean active) {
         try {
@@ -60,23 +65,18 @@ public class SalesService {
     public ApiResponse<SalesResponse> create(SalesCreationRequest request) {
         try {
             validateSaleDates(request.getStDate(), request.getEndDate());
-            validateSaleValue(request.getValue());
 
             boolean isActive = calculateActiveStatus(request.getStDate(), request.getEndDate());
 
             Sales sale = Sales.builder()
                     .name(request.getName())
-                    .value(request.getValue())
+                    .description(request.getDescription() != null ? request.getDescription() : "") // XỬ LÝ NULL
                     .stDate(request.getStDate())
                     .endDate(request.getEndDate())
                     .active(isActive)
                     .build();
 
             Sales saved = salesRepository.save(sale);
-
-            if (request.getProductIds() != null && !request.getProductIds().isEmpty()) {
-                addProductsToSale(saved.getId(), request.getProductIds());
-            }
 
             return ApiResponse.<SalesResponse>builder()
                     .result(toResponse(saved, isActive))
@@ -89,30 +89,18 @@ public class SalesService {
     }
 
     @Transactional
-    public ApiResponse<SalesResponse> update(Integer id,SalesUpdateRequest request) {
+    public ApiResponse<SalesResponse> update(Integer id, SalesUpdateRequest request) {
         try {
             Sales sale = salesRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
 
-            // CHỈ UPDATE NHỮNG FIELD ĐƯỢC GỬI TRONG REQUEST
-            if (request.getName() != null) {
-                sale.setName(request.getName());
-            }
+            // UPDATE THÔNG TIN SALE
+            if (request.getName() != null) sale.setName(request.getName());
+            if (request.getDescription() != null) sale.setDescription(request.getDescription());
+            if (request.getStDate() != null) sale.setStDate(request.getStDate());
+            if (request.getEndDate() != null) sale.setEndDate(request.getEndDate());
 
-            if (request.getValue() != null) {
-                validateSaleValue(request.getValue());
-                sale.setValue(request.getValue());
-            }
-
-            if (request.getStDate() != null) {
-                sale.setStDate(request.getStDate());
-            }
-
-            if (request.getEndDate() != null) {
-                sale.setEndDate(request.getEndDate());
-            }
-
-            // VALIDATE DATES NẾU CẢ HAI ĐƯỢC GỬI
+            // VALIDATE DATES
             if (request.getStDate() != null && request.getEndDate() != null) {
                 validateSaleDates(request.getStDate(), request.getEndDate());
             } else if (request.getStDate() != null) {
@@ -129,13 +117,9 @@ public class SalesService {
 
             Sales saved = salesRepository.save(sale);
 
-            // THÊM/XÓA PRODUCTS NẾU ĐƯỢC GỬI
-            if (request.getAddProductIds() != null && !request.getAddProductIds().isEmpty()) {
-                addProductsToSale(saved.getId(), request.getAddProductIds());
-            }
-
-            if (request.getRemoveProductIds() != null && !request.getRemoveProductIds().isEmpty()) {
-                removeProductsFromSale(saved.getId(), request.getRemoveProductIds());
+            // XỬ LÝ PRODUCTS VỚI VALUE RIÊNG
+            if (request.getProducts() != null && !request.getProducts().isEmpty()) {
+                updateProductsInSale(saved, request.getProducts());
             }
 
             return ApiResponse.<SalesResponse>builder()
@@ -154,9 +138,9 @@ public class SalesService {
             Sales sale = salesRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
 
-            if (!sale.getProducts().isEmpty()) {
-                sale.getProducts().clear();
-                salesRepository.save(sale);
+            // XÓA TẤT CẢ ProductSale TRƯỚC KHI XÓA SALE
+            if (!sale.getProductSales().isEmpty()) {
+                productSaleRepository.deleteAll(sale.getProductSales());
             }
 
             salesRepository.delete(sale);
@@ -171,47 +155,28 @@ public class SalesService {
         }
     }
 
-    private void addProductsToSale(Integer saleId, Set<Integer> productIds) {
-        Sales sale = salesRepository.findById(saleId)
-                .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
+    private void updateProductsInSale(Sales sale, List<ProductSaleItemRequest> productItems) {
+        // XÓA TẤT CẢ PRODUCTS CŨ
+        productSaleRepository.deleteAll(sale.getProductSales());
+        sale.getProductSales().clear();
 
-        var productsToAdd = productRepository.findAllById(productIds);
-        var foundIds = productsToAdd.stream()
-                .map(Product::getProductId)
-                .collect(Collectors.toSet());
+        // THÊM PRODUCTS MỚI VỚI VALUE RIÊNG
+        for (ProductSaleItemRequest item : productItems) {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
-        var missingIds = productIds.stream()
-                .filter(id -> !foundIds.contains(id))
-                .collect(Collectors.toSet());
+            // VALIDATE SALE VALUE
+            validateSaleValue(item.getValue());
 
-        if (!missingIds.isEmpty()) {
-            throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
+            ProductSale productSale = ProductSale.builder()
+                    .sale(sale)
+                    .product(product)
+                    .saleValue(item.getValue())
+                    .build();
+
+            productSaleRepository.save(productSale);
+            sale.getProductSales().add(productSale);
         }
-
-        var existingProductIds = sale.getProducts().stream()
-                .map(Product::getProductId)
-                .collect(Collectors.toSet());
-
-        var newProducts = productsToAdd.stream()
-                .filter(product -> !existingProductIds.contains(product.getProductId()))
-                .collect(Collectors.toSet());
-
-        sale.getProducts().addAll(newProducts);
-        salesRepository.save(sale);
-    }
-
-    private void removeProductsFromSale(Integer saleId, Set<Integer> productIds) {
-        Sales sale = salesRepository.findById(saleId)
-                .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
-
-        boolean removed = sale.getProducts().removeIf(product ->
-                productIds.contains(product.getProductId()));
-
-        if (!removed) {
-            throw new AppException(ErrorCode.PRODUCT_NOT_IN_SALE);
-        }
-
-        salesRepository.save(sale);
     }
 
     private boolean calculateActiveStatus(LocalDateTime stDate, LocalDateTime endDate) {
@@ -225,26 +190,44 @@ public class SalesService {
         }
     }
 
-    private void validateSaleValue(java.math.BigDecimal value) {
-        if (value.compareTo(java.math.BigDecimal.ZERO) < 0) {
+    private void validateSaleValue(BigDecimal value) {
+        if (value.compareTo(BigDecimal.ZERO) < 0 || value.compareTo(new BigDecimal("0.99")) > 0) {
             throw new AppException(ErrorCode.INVALID_SALE_VALUE);
         }
     }
 
     private SalesResponse toResponse(Sales sales, boolean isActive) {
-        Set<Integer> productIds = (sales.getProducts() == null) ? Set.of()
-                : sales.getProducts().stream()
-                .map(Product::getProductId)
-                .collect(Collectors.toSet());
+        // XỬ LÝ AN TOÀN CHO SALE MỚI TẠO (CHƯA CÓ PRODUCTS)
+        List<ProductSaleItemResponse> productItems = (sales.getProductSales() == null || sales.getProductSales().isEmpty())
+                ? List.of()  // TRẢ VỀ MẢNG RỖNG CHO SALE MỚI
+                : sales.getProductSales().stream()
+                .map(productSale -> {
+                    // KIỂM TRA NULL CHO product VÀ saleValue
+                    if (productSale.getProduct() == null || productSale.getSaleValue() == null) {
+                        return ProductSaleItemResponse.builder()
+                                .id(0)
+                                .value(BigDecimal.ZERO)
+                                .image("")
+                                .build();
+                    }
+                    return ProductSaleItemResponse.builder()
+                            .id(productSale.getProduct().getProductId())
+                            .value(productSale.getSaleValue())
+                            .image(productSale.getProduct().getImage() != null
+                                    ? productSale.getProduct().getImage()
+                                    : "")
+                            .build();
+                })
+                .collect(Collectors.toList());
 
         return SalesResponse.builder()
                 .id(sales.getId())
                 .name(sales.getName())
-                .value(sales.getValue())
+                .description(sales.getDescription() != null ? sales.getDescription() : "")
                 .stDate(sales.getStDate())
                 .endDate(sales.getEndDate())
                 .active(isActive)
-                .productIds(productIds)
+                .list_product(productItems)
                 .build();
     }
 }
