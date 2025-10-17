@@ -102,7 +102,7 @@ public class AuthenticationService {
 
             InvalidtedToken invalidtedToken=InvalidtedToken.builder()
                     .id(jit)
-                    .expỉyTime(expiryTime)
+                    .expiryTime(expiryTime)
                     .build();
             invalidtedTokenRepository.save(invalidtedToken);
         }catch (AppException e){
@@ -120,7 +120,7 @@ public class AuthenticationService {
 
         InvalidtedToken invalidtedToken=InvalidtedToken.builder()
                 .id(jit)
-                .expỉyTime(expiryTime)
+                .expiryTime(expiryTime)
                 .build();
         invalidtedTokenRepository.save(invalidtedToken);
 

@@ -104,7 +104,7 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         if (request.getCategoryName() != null) cat.setName(request.getCategoryName());
-        if (request.getPerentId() != null)     cat.setParent_id(request.getPerentId());
+        if (request.getParentId() != null)     cat.setParent_id(request.getParentId());
 
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String url = uploadImageFile.uploadImage(request.getImage());

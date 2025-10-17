@@ -15,7 +15,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryUpdateRequest {
     String categoryName;
-    Integer perentId;
+    Integer parentId;
     MultipartFile image;
 
     Set<Integer> addProductIds;

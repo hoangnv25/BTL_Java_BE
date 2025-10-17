@@ -2,6 +2,7 @@ package com.BTL_JAVA.BTL.Controller.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
 import com.BTL_JAVA.BTL.DTO.Request.CategoryCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.CategoryUpdateRequest;
 import com.BTL_JAVA.BTL.DTO.Response.CategoryResponse;
 import com.BTL_JAVA.BTL.Service.Product.CategoryService;
 import jakarta.validation.Valid;
@@ -41,5 +42,10 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> list() {
         return ResponseEntity.ok(categoryService.list());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> update(@PathVariable Integer id, @ModelAttribute CategoryUpdateRequest req) throws IOException {
+        return ResponseEntity.ok(categoryService.update(id, req));
     }
 }
