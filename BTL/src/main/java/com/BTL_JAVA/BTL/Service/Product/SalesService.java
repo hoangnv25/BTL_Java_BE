@@ -65,7 +65,7 @@ public class SalesService {
     public ApiResponse<SalesResponse> create(SalesCreationRequest request) {
         try {
             validateSaleDates(request.getStDate(), request.getEndDate());
-
+            validateNoOverlappingSales(request.getStDate(), request.getEndDate(), null);
             boolean isActive = calculateActiveStatus(request.getStDate(), request.getEndDate());
 
             Sales sale = Sales.builder()
@@ -94,7 +94,11 @@ public class SalesService {
             Sales sale = salesRepository.findById(id)
                     .orElseThrow(() -> new AppException(ErrorCode.SALE_NOT_EXISTED));
 
-            // UPDATE THÔNG TIN SALE
+            if (request.getStDate() != null || request.getEndDate() != null) {
+                LocalDateTime newStDate = request.getStDate() != null ? request.getStDate() : sale.getStDate();
+                LocalDateTime newEndDate = request.getEndDate() != null ? request.getEndDate() : sale.getEndDate();
+                validateNoOverlappingSales(newStDate, newEndDate, id);
+            }
             if (request.getName() != null) sale.setName(request.getName());
             if (request.getDescription() != null) sale.setDescription(request.getDescription());
             if (request.getStDate() != null) sale.setStDate(request.getStDate());
@@ -154,7 +158,21 @@ public class SalesService {
             throw new AppException(ErrorCode.DELETE_FAILED);
         }
     }
+    private void validateNoOverlappingSales(LocalDateTime stDate, LocalDateTime endDate, Integer excludeSaleId) {
+        List<Sales> allSales = salesRepository.findAll();
 
+        boolean hasOverlap = allSales.stream()
+                .filter(sale -> excludeSaleId == null || sale.getId() != excludeSaleId)
+                .anyMatch(sale -> isTimeOverlapping(stDate, endDate, sale.getStDate(), sale.getEndDate()));
+
+        if (hasOverlap) {
+            throw new AppException(ErrorCode.SALE_OVERLAPPING);
+        }
+    }
+
+    private boolean isTimeOverlapping(LocalDateTime newSt, LocalDateTime newEnd, LocalDateTime existingSt, LocalDateTime existingEnd) {
+        return (newSt.isBefore(existingEnd) && newEnd.isAfter(existingSt));
+    }
     private void addProductsToSale(Sales sale, List<ProductSaleItemRequest> addProducts) {
         for (ProductSaleItemRequest item : addProducts) {
             boolean alreadyExists = sale.getProductSales().stream()

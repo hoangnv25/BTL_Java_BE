@@ -58,6 +58,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/sales").hasRole(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PUT, "/sales/**").hasRole(Role.ADMIN.name())     // SỬA THÀNH /sales/**
                         .requestMatchers(HttpMethod.DELETE, "/sales/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/cart/**").authenticated()
+                        .requestMatchers("/address/**").authenticated()
                         .anyRequest().authenticated()
                 );
 //                .httpBasic(Customizer.withDefaults())  // bật Basic Auth
