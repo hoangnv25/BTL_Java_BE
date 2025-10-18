@@ -22,7 +22,10 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(1012, "The requested order was not found.", HttpStatus.NOT_FOUND),
     CANNOT_CANCEL_ORDER(1013, "This order cannot be canceled.", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED(1014, "Product variation not found.", HttpStatus.NOT_FOUND),
-    INSUFFICIENT_STOCK(1015, "Insufficient stock for this product.", HttpStatus.BAD_REQUEST)
+    INSUFFICIENT_STOCK(1015, "Insufficient stock for this product.", HttpStatus.BAD_REQUEST),
+    FEEDBACK_NOT_FOUND(1016, "Feedback not found.", HttpStatus.NOT_FOUND),
+    ALREADY_FEEDBACKED(1017, "Ban da danh gia san pham nay roi.", HttpStatus.BAD_REQUEST),
+    NOT_PURCHASED_PRODUCT(1018, "Ban chua mua san pham nay.", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

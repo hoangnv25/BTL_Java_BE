@@ -12,7 +12,7 @@ import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.AddressRepository;
 import com.BTL_JAVA.BTL.Repository.CartRepository;
-import com.BTL_JAVA.BTL.Repository.Order.OrderRepository;
+import com.BTL_JAVA.BTL.Repository.OrderRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import jakarta.transaction.Transactional;
@@ -65,7 +65,7 @@ public class OrderService {
         // 1. Lấy thông tin user
         User user = getCurrentAuthenticatedUser();
 
-        // 2. Lấy địa chỉ của user (lấy địa chỉ đầu tiên)
+        // 2. Lấy địa chỉ của user
         Address address = addressRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
 

@@ -54,4 +54,9 @@ public class User {
     cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     List<Cart> carts;
 
+    @OneToMany(mappedBy = "user",
+    fetch = FetchType.LAZY,
+    cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
+    List<Feedback> feedbacks;
+
 }

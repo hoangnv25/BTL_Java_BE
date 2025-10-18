@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.Repository.Order;
+package com.BTL_JAVA.BTL.Repository;
 
 import com.BTL_JAVA.BTL.Entity.Orders.Order;
 import com.BTL_JAVA.BTL.Entity.User;
