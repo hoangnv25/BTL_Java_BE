@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.User;
 
 
 import lombok.*;
@@ -23,3 +23,4 @@ public class UserResponse {
 
      Set<RoleResponse> roles;
 }
+

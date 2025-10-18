@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Response;
 
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import lombok.AccessLevel;
@@ -36,3 +36,4 @@ public class OrderResponse {
         int quantity;
     }
 }
+

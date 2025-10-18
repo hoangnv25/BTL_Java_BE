@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Product;
 
 
 import lombok.*;
@@ -20,3 +20,4 @@ public class ProductVariationResponse {
         Integer stockQuantity;
         String  image;
 }
+

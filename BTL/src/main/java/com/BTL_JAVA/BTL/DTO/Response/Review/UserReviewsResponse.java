@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Review;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,4 +26,5 @@ public class UserReviewsResponse {
         LocalDateTime createdAt;
     }
 }
+
 

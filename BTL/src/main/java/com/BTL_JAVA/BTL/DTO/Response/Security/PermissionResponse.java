@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Security;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,3 +13,4 @@ public class PermissionResponse {
     String name;
     String description;
 }
+

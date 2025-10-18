@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Product;
 
 
 import lombok.*;
@@ -24,3 +24,4 @@ public class ProductResponse {
 //        Set<Integer> variationIds;
         List<ProductVariationResponse> variations;
 }
+
