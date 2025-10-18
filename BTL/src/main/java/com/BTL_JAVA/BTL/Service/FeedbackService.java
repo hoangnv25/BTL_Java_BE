@@ -9,7 +9,6 @@ import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.FeedbackRepository;
-import com.BTL_JAVA.BTL.Repository.OrderDetailRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -60,7 +59,7 @@ public class FeedbackService {
 
         // Kiểm tra product có tồn tại
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // Kiểm tra user đã feedback cho product này chưa
         if (feedbackRepository.hasUserFeedbackedProduct(user.getId(), productId)) {
@@ -93,7 +92,7 @@ public class FeedbackService {
     public ProductFeedbackSummary getAllFeedbackByProductId(Integer productId) {
         // Kiểm tra product có tồn tại
         productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         List<Feedback> feedbacks = feedbackRepository.findByProductIdWithDetails(productId);
         
@@ -103,7 +102,7 @@ public class FeedbackService {
             productName = feedbacks.get(0).getProduct().getTitle();
         } else {
             Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
             productName = product.getTitle();
         }
 
@@ -136,7 +135,7 @@ public class FeedbackService {
     public Page<FeedbackResponse> getFeedbackByProductIdPaginated(Integer productId, int page, int size) {
         // Kiểm tra product có tồn tại
         productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Feedback> feedbackPage = feedbackRepository.findByProductIdPaginated(productId, pageable);

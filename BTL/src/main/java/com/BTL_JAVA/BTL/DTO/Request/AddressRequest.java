@@ -1,5 +1,6 @@
 package com.BTL_JAVA.BTL.DTO.Request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +11,14 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddressRequest {
+    @NotBlank(message = "Địa chỉ không được để trống")
     String street;
+    
+    @NotBlank(message = "Phường/Xã không được để trống")
     String ward;
+    
+    @NotBlank(message = "Thành phố không được để trống")
     String city;
+    
     boolean defaultAddress;
 }

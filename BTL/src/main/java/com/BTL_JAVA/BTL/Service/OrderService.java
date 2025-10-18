@@ -6,13 +6,14 @@ import com.BTL_JAVA.BTL.DTO.Response.OrderResponse;
 import com.BTL_JAVA.BTL.Entity.Address;
 import com.BTL_JAVA.BTL.Entity.Orders.Order;
 import com.BTL_JAVA.BTL.Entity.Orders.OrderDetail;
+import com.BTL_JAVA.BTL.Entity.Product.ProductSale;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.AddressRepository;
-import com.BTL_JAVA.BTL.Repository.CartRepository;
 import com.BTL_JAVA.BTL.Repository.OrderRepository;
+import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +43,8 @@ public class OrderService {
     final OrderRepository orderRepository;
     final UserRepository userRepository;
     final AddressRepository addressRepository;
-    final CartRepository cartRepository;
     final com.BTL_JAVA.BTL.Repository.ProductVariationRepository productVariationRepository;
-    // Có thể thêm sale
+    final ProductSaleRepository productSaleRepository;
 
     // Các phương thức lấy người và ktra quyền
     User getCurrentAuthenticatedUser() {
@@ -57,6 +59,38 @@ public class OrderService {
         if (!isAdmin) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
+    }
+
+    /**
+     * Tính giá cuối cùng cho sản phẩm, có áp dụng sale nếu có
+     * @param productId ID của sản phẩm
+     * @param originalPrice Giá gốc
+     * @return Giá sau khi áp dụng sale (nếu có)
+     */
+    private Double calculateFinalPrice(Integer productId, Double originalPrice) {
+        LocalDateTime now = LocalDateTime.now();
+        
+        // Tìm tất cả các ProductSale đang active của product này (đã sort theo saleValue DESC)
+        List<ProductSale> productSales = productSaleRepository.findActiveProductSaleByProductId(productId, now);
+        
+        // Nếu có sale, lấy discount lớn nhất (phần tử đầu tiên do đã sort DESC)
+        if (!productSales.isEmpty()) {
+            BigDecimal maxDiscount = productSales.get(0).getSaleValue();
+            
+            if (maxDiscount != null && maxDiscount.compareTo(BigDecimal.ZERO) > 0) {
+                // Áp dụng discount: giá cuối = giá gốc * (1 - discount)
+                // Ví dụ: discount = 0.2 (20%) => giá cuối = giá gốc * 0.8
+                BigDecimal discountMultiplier = BigDecimal.ONE.subtract(maxDiscount);
+                double finalPrice = originalPrice * discountMultiplier.doubleValue();
+                
+                log.info("Product {} có sale {}% - Giá gốc: {}, Giá sale: {}", 
+                        productId, maxDiscount.multiply(BigDecimal.valueOf(100)), originalPrice, finalPrice);
+                
+                return finalPrice;
+            }
+        }
+        
+        return originalPrice;
     }
 
     // tạo Order
@@ -85,15 +119,16 @@ public class OrderService {
         for (OrderRequest.Item item : request.getItems()) {
             // Lấy ProductVariation từ database
             ProductVariation variation = productVariationRepository.findById(item.getVariationId())
-                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIATION_NOT_FOUND));
 
             // Kiểm tra tồn kho
             if (variation.getStockQuantity() < item.getQuantity()) {
                 throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
             }
 
-            // Tính giá (có thể thêm logic sale ở đây)
-            Double finalPrice = variation.getProduct().getPrice();
+            // Tính giá có áp dụng sale
+            Double originalPrice = variation.getProduct().getPrice();
+            Double finalPrice = calculateFinalPrice(variation.getProduct().getProductId(), originalPrice);
 
             // Tạo OrderDetail
             OrderDetail orderDetail = OrderDetail.builder()

@@ -49,9 +49,4 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> list() {
         return ResponseEntity.ok(categoryService.list());
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> update(@PathVariable Integer id, @ModelAttribute CategoryUpdateRequest req) throws IOException {
-        return ResponseEntity.ok(categoryService.update(id, req));
-    }
 }

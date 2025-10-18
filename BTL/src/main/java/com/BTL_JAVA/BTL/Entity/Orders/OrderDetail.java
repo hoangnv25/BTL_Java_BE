@@ -40,9 +40,4 @@ public class OrderDetail {
 
     @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
     int quantity;
-
-    @OneToMany(mappedBy = "orderDetail",
-               fetch = FetchType.LAZY,
-    cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
-    java.util.List<com.BTL_JAVA.BTL.Entity.Feedback> feedbacks;
 }

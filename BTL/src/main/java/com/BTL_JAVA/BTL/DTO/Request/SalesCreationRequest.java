@@ -1,13 +1,11 @@
 package com.BTL_JAVA.BTL.DTO.Request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,8 +14,14 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalesCreationRequest {
+    @NotBlank(message = "Tên sale không được để trống")
     String name;
+    
     String description;
+    
+    @NotNull(message = "Ngày bắt đầu không được để trống")
     LocalDateTime stDate;
+    
+    @NotNull(message = "Ngày kết thúc không được để trống")
     LocalDateTime endDate;
 }

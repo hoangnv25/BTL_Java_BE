@@ -188,7 +188,7 @@ public class SalesService {
                 existing.setSaleValue(item.getValue());
             } else {
                 Product product = productRepository.findById(item.getProductId())
-                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
                 validateSaleValue(item.getValue());
 

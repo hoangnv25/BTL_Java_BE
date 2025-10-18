@@ -3,6 +3,7 @@ package com.BTL_JAVA.BTL.Controller;
 import com.BTL_JAVA.BTL.DTO.Request.AddressRequest;
 import com.BTL_JAVA.BTL.DTO.Response.AddressResponse;
 import com.BTL_JAVA.BTL.Service.AddressService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,7 +34,7 @@ public class AddressController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public AddressResponse createAddress(@RequestBody AddressRequest request) {
+    public AddressResponse createAddress(@Valid @RequestBody AddressRequest request) {
         return addressService.createAddress(request);
     }
 
@@ -41,7 +42,7 @@ public class AddressController {
     @PreAuthorize("isAuthenticated()")
     public AddressResponse updateAddress(
             @PathVariable Integer id,
-            @RequestBody AddressRequest request) {
+            @Valid @RequestBody AddressRequest request) {
         return addressService.updateAddress(id, request);
     }
 
