@@ -1,11 +1,11 @@
-package com.BTL_JAVA.BTL.Service.Product;
+﻿package com.BTL_JAVA.BTL.Service.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.ProductCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.ProductUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Product.ProductCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Product.ProductUpdateRequest;
 import com.BTL_JAVA.BTL.DTO.Response.PageResult;
-import com.BTL_JAVA.BTL.DTO.Response.ProductResponse;
-import com.BTL_JAVA.BTL.DTO.Response.ProductVariationResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Product.ProductResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Product.ProductVariationResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Category;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;

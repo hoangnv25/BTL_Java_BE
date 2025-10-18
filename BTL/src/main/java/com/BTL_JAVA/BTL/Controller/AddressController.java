@@ -1,7 +1,7 @@
-package com.BTL_JAVA.BTL.Controller;
+﻿package com.BTL_JAVA.BTL.Controller;
 
-import com.BTL_JAVA.BTL.DTO.Request.AddressRequest;
-import com.BTL_JAVA.BTL.DTO.Response.AddressResponse;
+import com.BTL_JAVA.BTL.DTO.Request.User.AddressRequest;
+import com.BTL_JAVA.BTL.DTO.Response.User.AddressResponse;
 import com.BTL_JAVA.BTL.Service.AddressService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

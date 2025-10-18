@@ -1,9 +1,9 @@
-package com.BTL_JAVA.BTL.Controller;
+﻿package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.FeedbackRequest;
-import com.BTL_JAVA.BTL.DTO.Response.FeedbackResponse;
-import com.BTL_JAVA.BTL.DTO.Response.ProductFeedbackSummary;
+import com.BTL_JAVA.BTL.DTO.Request.Review.FeedbackRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Review.FeedbackResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Review.ProductFeedbackSummary;
 import com.BTL_JAVA.BTL.Service.FeedbackService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

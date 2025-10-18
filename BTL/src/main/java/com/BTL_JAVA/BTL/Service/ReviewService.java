@@ -1,8 +1,8 @@
-package com.BTL_JAVA.BTL.Service;
+﻿package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.ReviewRequest;
-import com.BTL_JAVA.BTL.DTO.Response.ReviewResponse;
-import com.BTL_JAVA.BTL.DTO.Response.UserReviewsResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Review.ReviewRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Review.ReviewResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Review.UserReviewsResponse;
 import com.BTL_JAVA.BTL.Entity.Review;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;

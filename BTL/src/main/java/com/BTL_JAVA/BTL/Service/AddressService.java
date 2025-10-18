@@ -1,7 +1,7 @@
-package com.BTL_JAVA.BTL.Service;
+﻿package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.AddressRequest;
-import com.BTL_JAVA.BTL.DTO.Response.AddressResponse;
+import com.BTL_JAVA.BTL.DTO.Request.User.AddressRequest;
+import com.BTL_JAVA.BTL.DTO.Response.User.AddressResponse;
 import com.BTL_JAVA.BTL.Entity.Address;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;

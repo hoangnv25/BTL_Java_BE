@@ -1,8 +1,8 @@
-package com.BTL_JAVA.BTL.Service;
+﻿package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.FeedbackRequest;
-import com.BTL_JAVA.BTL.DTO.Response.FeedbackResponse;
-import com.BTL_JAVA.BTL.DTO.Response.ProductFeedbackSummary;
+import com.BTL_JAVA.BTL.DTO.Request.Review.FeedbackRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Review.FeedbackResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Review.ProductFeedbackSummary;
 import com.BTL_JAVA.BTL.Entity.Feedback;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.Entity.User;

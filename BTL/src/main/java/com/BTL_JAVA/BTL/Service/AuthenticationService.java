@@ -1,11 +1,11 @@
-package com.BTL_JAVA.BTL.Service;
+﻿package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.AuthenticationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.IntrospectRequest;
-import com.BTL_JAVA.BTL.DTO.Request.LogoutRequest;
-import com.BTL_JAVA.BTL.DTO.Request.RefreshRequest;
-import com.BTL_JAVA.BTL.DTO.Response.AuthenticationResponse;
-import com.BTL_JAVA.BTL.DTO.Response.IntrospectResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.AuthenticationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.IntrospectRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.LogoutRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.RefreshRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Auth.AuthenticationResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Auth.IntrospectResponse;
 import com.BTL_JAVA.BTL.Entity.InvalidtedToken;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;

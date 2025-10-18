@@ -1,9 +1,9 @@
-package com.BTL_JAVA.BTL.Controller;
+﻿package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.ReviewRequest;
-import com.BTL_JAVA.BTL.DTO.Response.ReviewResponse;
-import com.BTL_JAVA.BTL.DTO.Response.UserReviewsResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Review.ReviewRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Review.ReviewResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Review.UserReviewsResponse;
 import com.BTL_JAVA.BTL.Service.ReviewService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
