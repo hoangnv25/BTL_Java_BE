@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.Review;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

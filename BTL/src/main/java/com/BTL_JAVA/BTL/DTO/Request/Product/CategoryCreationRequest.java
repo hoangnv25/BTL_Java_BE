@@ -1,10 +1,10 @@
-package com.BTL_JAVA.BTL.DTO.Request;
-
+package com.BTL_JAVA.BTL.DTO.Request.Product;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -13,10 +13,14 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductVariationCreationRequest {
-    Integer productId;
-    String size;
-    String color;
-    Integer stockQuantity;
-    MultipartFile image;
+public class CategoryCreationRequest {
+    private String categoryName;
+
+    private Integer perentId;
+
+
+    private MultipartFile image;
+
+    Set<Integer> productIds;
+
 }

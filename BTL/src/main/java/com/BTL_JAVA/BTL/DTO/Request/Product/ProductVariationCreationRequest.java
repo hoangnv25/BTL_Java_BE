@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.Product;
 
 
 import lombok.*;
@@ -13,12 +13,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductVariationUpdateRequest {
+public class ProductVariationCreationRequest {
     Integer productId;
-    String  size;
-    String  color;
+    String size;
+    String color;
     Integer stockQuantity;
-
-
     MultipartFile image;
 }

@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.Auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LogoutRequest {
+public class IntrospectRequest {
     String token;
 }

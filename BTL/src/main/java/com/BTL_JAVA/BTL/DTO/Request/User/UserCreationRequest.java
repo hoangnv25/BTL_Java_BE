@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.User;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;

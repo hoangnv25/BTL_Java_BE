@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.Product;
 
 
 import lombok.*;
@@ -13,11 +13,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreationRequest {
-    String title;
-    String description;
-    Double price;
-    Integer categoryId;
+public class CategoryUpdateRequest {
+    String categoryName;
+    Integer parentId;
     MultipartFile image;
-    Set<Integer> variationIds;
+
+    Set<Integer> addProductIds;
+    Set<Integer> removeProductIds;
 }

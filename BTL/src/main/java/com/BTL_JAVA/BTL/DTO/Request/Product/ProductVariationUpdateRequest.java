@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Request;
+package com.BTL_JAVA.BTL.DTO.Request.Product;
 
 
 import lombok.*;
@@ -13,11 +13,12 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryUpdateRequest {
-    String categoryName;
-    Integer parentId;
-    MultipartFile image;
+public class ProductVariationUpdateRequest {
+    Integer productId;
+    String  size;
+    String  color;
+    Integer stockQuantity;
 
-    Set<Integer> addProductIds;
-    Set<Integer> removeProductIds;
+
+    MultipartFile image;
 }
