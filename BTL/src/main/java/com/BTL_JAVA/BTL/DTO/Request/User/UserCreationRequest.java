@@ -1,6 +1,5 @@
 package com.BTL_JAVA.BTL.DTO.Request.User;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
