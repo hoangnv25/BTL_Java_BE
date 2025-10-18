@@ -4,6 +4,7 @@ package com.BTL_JAVA.BTL.DTO.Response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -20,5 +21,6 @@ public class ProductResponse {
         String  image;
         Integer categoryId;
         Integer variationCount;
-        Set<Integer> variationIds;
+//        Set<Integer> variationIds;
+        List<ProductVariationResponse> variations;
 }

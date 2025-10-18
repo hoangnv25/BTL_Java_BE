@@ -12,26 +12,26 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Table(name = "addresses")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    User user;
-    @Column
-    boolean isDefault;
+    @Column(name = "street", nullable = false)
+    private String street;
 
-    @Column
-    String street;
+    @Column(name = "ward", nullable = false)
+    private String ward;
 
-    @Column
-    String ward;
+    @Column(name = "city", nullable = false)
+    private String city;
 
-    @Column
-    String city;
+    @Column(name = "is_default")
+    private boolean isDefault;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

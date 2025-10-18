@@ -6,6 +6,8 @@ import com.BTL_JAVA.BTL.DTO.Request.ProductVariationUpdateRequest;
 import com.BTL_JAVA.BTL.DTO.Response.ProductVariationResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
+import com.BTL_JAVA.BTL.Exception.AppException;
+import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
 import com.BTL_JAVA.BTL.Repository.ProductVariationRepository;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
@@ -29,8 +31,12 @@ public class ProductVariationService {
     UploadImageFile uploadImageFile;
 
     public ApiResponse<ProductVariationResponse> create(ProductVariationCreationRequest req) throws IOException {
-        if (req.getProductId() == null) {
-            throw new RuntimeException("productId is required");
+        if (req.getProductId() == null||req.getSize()==null||req.getColor()==null) {
+            throw new AppException(ErrorCode.INVALID_VARIATION);
+        }
+
+        if(productVariationRepository.existsByProduct_ProductIdAndSizeIgnoreCaseAndColorIgnoreCase(req.getProductId(), req.getSize(), req.getColor())) {
+            throw new AppException(ErrorCode.DUPLICATE_VARIATION);
         }
 
         Product productRef = productRepository.getReferenceById(req.getProductId());
@@ -54,8 +60,21 @@ public class ProductVariationService {
     // UPDATE (partial + có thể chuyển sang product khác)
     @Transactional
     public ApiResponse<ProductVariationResponse> update(Integer id, ProductVariationUpdateRequest req) throws IOException {
+
         ProductVariation pv = productVariationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductVariation not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.VARIATION_NOT_FOUND));
+
+        Integer productId = req.getProductId() != null ? req.getProductId()
+                : (pv.getProduct() != null ? pv.getProduct().getProductId() : null);
+
+        String size  = req.getSize()  != null ? req.getSize().trim()  : pv.getSize();
+        String color = req.getColor() != null ? req.getColor().trim() : pv.getColor();
+
+        if (productVariationRepository
+                .existsByProduct_ProductIdAndSizeIgnoreCaseAndColorIgnoreCaseAndIdNot(productId, size, color, id)) {
+            throw new AppException(ErrorCode.DUPLICATE_VARIATION);
+        }
+
 
         if (req.getProductId() != null) {
             Product productRef = productRepository.getReferenceById(req.getProductId());
@@ -78,7 +97,7 @@ public class ProductVariationService {
     @Transactional
     public ApiResponse<Void> delete(Integer id) {
         ProductVariation pv = productVariationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductVariation not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.VARIATION_NOT_FOUND));
         productVariationRepository.delete(pv);
         return ApiResponse.ok(null);
     }
@@ -87,7 +106,7 @@ public class ProductVariationService {
 
     public ApiResponse<ProductVariationResponse> get(Integer id) {
         ProductVariation pv = productVariationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductVariation not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.VARIATION_NOT_FOUND));
         return ApiResponse.ok(toResponse(pv));
     }
 

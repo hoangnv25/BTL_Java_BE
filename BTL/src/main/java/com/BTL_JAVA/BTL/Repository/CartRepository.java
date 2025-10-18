@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     List<Cart> findByUserId(Integer userId);
-    
+
     @Modifying
     @Query("DELETE FROM Cart c WHERE c.user.id = :userId")
     void deleteByUserId(@Param("userId") Integer userId);

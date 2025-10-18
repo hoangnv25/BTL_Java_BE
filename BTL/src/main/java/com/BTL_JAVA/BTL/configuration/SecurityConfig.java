@@ -43,22 +43,27 @@ public class SecurityConfig {
 
         http.oauth2ResourceServer(oauth2->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                ).authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        ).authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new JwtAccessDeniedHandler())
 
         );
 
 
-              http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        // cho phép tạo user không cần đăng nhập
+                        .requestMatchers(HttpMethod.GET, "/sales").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/users").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/sales").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/sales/**").hasRole(Role.ADMIN.name())     // SỬA THÀNH /sales/**
+                        .requestMatchers(HttpMethod.DELETE, "/sales/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/cart/**").authenticated()
+                        .requestMatchers("/address/**").authenticated()
                         .anyRequest().authenticated()
                 );
 //                .httpBasic(Customizer.withDefaults())  // bật Basic Auth
-                return http.build();
+        return http.build();
     }
 
 
@@ -73,9 +78,9 @@ public class SecurityConfig {
 
 
 
-     @Bean
-     PasswordEncoder passwordEncoder() {
+    @Bean
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
-     }
+    }
 
 }
