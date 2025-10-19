@@ -1,7 +1,7 @@
-package com.BTL_JAVA.BTL.Service;
+﻿package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.PermissionRequest;
-import com.BTL_JAVA.BTL.DTO.Response.PermissionResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Security.PermissionRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Security.PermissionResponse;
 import com.BTL_JAVA.BTL.Entity.Permission;
 import com.BTL_JAVA.BTL.Repository.PermissionRepository;
 import lombok.AccessLevel;

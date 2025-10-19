@@ -1,10 +1,10 @@
-package com.BTL_JAVA.BTL.Service.Product;
+﻿package com.BTL_JAVA.BTL.Service.Product;
 
-import com.BTL_JAVA.BTL.DTO.Request.CategoryUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Product.CategoryUpdateRequest;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.CategoryCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Response.CategoryResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Product.CategoryCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Product.CategoryResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Category;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
@@ -109,7 +109,7 @@ public class CategoryService {
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         if (request.getCategoryName() != null) cat.setName(request.getCategoryName());
-        if (request.getPerentId() != null)     cat.setParent_id(request.getPerentId());
+        if (request.getParentId() != null)     cat.setParent_id(request.getParentId());
 
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String url = uploadImageFile.uploadImage(request.getImage());

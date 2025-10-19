@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,3 +19,4 @@ public class PageResult<T> {
      long total;      // tổng bản ghi
      int totalPages;  // tổng số trang
 }
+

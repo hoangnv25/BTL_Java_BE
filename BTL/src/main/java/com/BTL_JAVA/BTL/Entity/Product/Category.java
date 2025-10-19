@@ -25,7 +25,7 @@ public class Category {
     String name;
 
     @Column(name = "parent_id")
-    int parent_id;
+    Integer parent_id;
 
     @Column(name="image_url")
     String imageUrl;
