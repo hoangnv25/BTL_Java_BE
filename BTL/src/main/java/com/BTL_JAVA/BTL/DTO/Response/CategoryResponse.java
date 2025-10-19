@@ -15,14 +15,9 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
         Integer categoryId;
-
         String categoryName;
-
         Integer perentId;
-
         String image;
-
         Integer   productCount;
-
-      Set<Integer> productIds;
+        Set<Integer> productIds;
 }

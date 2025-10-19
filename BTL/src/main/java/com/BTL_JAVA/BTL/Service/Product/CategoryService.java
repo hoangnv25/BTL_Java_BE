@@ -10,6 +10,7 @@ import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.CategoryRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
+import com.BTL_JAVA.BTL.Repository.ProductVariationRepository;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,6 +32,7 @@ public class CategoryService {
       CategoryRepository categoryRepository;
       UploadImageFile uploadImageFile;
       ProductRepository productRepository;
+      ProductVariationRepository productVariationRepository;
 
       public ApiResponse<CategoryResponse> create(CategoryCreationRequest request) throws IOException {
           Category cat=Category.builder()
@@ -84,6 +86,7 @@ public class CategoryService {
         Set<Integer> productIds = (c.getProducts() == null)
                 ? Set.of()
                 : c.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
+
 
         return ApiResponse.ok(toResponse(c, productIds));
     }
