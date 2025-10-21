@@ -1,5 +1,6 @@
 package com.BTL_JAVA.BTL.DTO.Response.Sales;
 
+import com.BTL_JAVA.BTL.DTO.Response.Product.ProductSaleItemResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

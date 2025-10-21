@@ -1,4 +1,4 @@
-﻿package com.BTL_JAVA.BTL.configuration;
+package com.BTL_JAVA.BTL.configuration;
 
 import java.text.ParseException;
 import java.util.Objects;

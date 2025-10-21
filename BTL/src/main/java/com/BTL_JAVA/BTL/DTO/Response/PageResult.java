@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response.Response;
+package com.BTL_JAVA.BTL.DTO.Response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
