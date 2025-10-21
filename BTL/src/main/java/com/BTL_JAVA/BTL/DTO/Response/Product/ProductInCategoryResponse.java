@@ -6,7 +6,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -14,16 +13,12 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductResponse {
+public class ProductInCategoryResponse {
         Integer productId;
         String  title;
-        String  description;
         Double  price;
         String  image;
-        Integer categoryId;
-        Integer variationCount;
         BigDecimal saleValue;
-//        Set<Integer> variationIds;
-        List<ProductVariationResponse> variations;
+        Integer      variationCount;
+        List<String> variationImages;
 }
-
