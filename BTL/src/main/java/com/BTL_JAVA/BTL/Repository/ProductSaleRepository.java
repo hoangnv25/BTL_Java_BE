@@ -26,4 +26,5 @@ public interface ProductSaleRepository extends JpaRepository<ProductSale, Intege
         @Param("productId") Integer productId, 
         @Param("now") LocalDateTime now
     );
+
 }

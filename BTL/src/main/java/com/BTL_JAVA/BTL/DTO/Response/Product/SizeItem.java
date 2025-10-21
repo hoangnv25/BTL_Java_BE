@@ -1,7 +1,8 @@
-package com.BTL_JAVA.BTL.DTO.Response.Auth;
+package com.BTL_JAVA.BTL.DTO.Response.Product;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 
 @Getter
 @Setter
@@ -9,9 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String token;
-    boolean authenticated;
-    String role;
+public class SizeItem {
+    Integer idCategory;
+    String size;
+    Integer stockQuantity;
 }
-

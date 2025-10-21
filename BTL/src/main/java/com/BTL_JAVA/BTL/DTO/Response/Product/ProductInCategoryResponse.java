@@ -1,9 +1,10 @@
-package com.BTL_JAVA.BTL.DTO.Response;
+package com.BTL_JAVA.BTL.DTO.Response.Product;
 
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -15,11 +16,9 @@ import java.util.List;
 public class ProductInCategoryResponse {
         Integer productId;
         String  title;
-        String  description;
         Double  price;
         String  image;
-        Integer categoryId;
-        Integer variationCount;
-//        Set<Integer> variationIds;
-        List<ProductVariationResponse> variations;
+        BigDecimal saleValue;
+        Integer      variationCount;
+        List<String> variationImages;
 }
