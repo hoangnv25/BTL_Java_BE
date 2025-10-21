@@ -42,4 +42,9 @@ public class Product {
     cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     private List<ProductVariation> productVariations;
 
+    @OneToMany(mappedBy = "product",
+               fetch = FetchType.LAZY,
+    cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
+    private List<com.BTL_JAVA.BTL.Entity.Feedback> feedbacks;
+
 }

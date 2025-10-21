@@ -1,8 +1,8 @@
 package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.RoleRequest;
-import com.BTL_JAVA.BTL.DTO.Response.PermissionResponse;
-import com.BTL_JAVA.BTL.DTO.Response.RoleResponse;
+import com.BTL_JAVA.BTL.DTO.Request.Security.RoleRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Security.PermissionResponse;
+import com.BTL_JAVA.BTL.DTO.Response.Security.RoleResponse;
 import com.BTL_JAVA.BTL.Entity.Permission;
 import com.BTL_JAVA.BTL.Entity.Role;
 import com.BTL_JAVA.BTL.Repository.PermissionRepository;
