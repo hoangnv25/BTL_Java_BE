@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "card_id")
+    @Column(name = "cart_id")
     int id;
 
     @Column(name = "quantity")

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.Objects;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.BTL_JAVA.BTL.DTO.Request.IntrospectRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.IntrospectRequest;
 import com.BTL_JAVA.BTL.Service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

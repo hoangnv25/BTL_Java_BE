@@ -1,11 +1,8 @@
 package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.PermissionRequest;
-import com.BTL_JAVA.BTL.DTO.Request.RoleRequest;
-import com.BTL_JAVA.BTL.DTO.Response.PermissionResponse;
-import com.BTL_JAVA.BTL.DTO.Response.RoleResponse;
-import com.BTL_JAVA.BTL.Service.PermissionService;
+import com.BTL_JAVA.BTL.DTO.Request.Security.RoleRequest;
+import com.BTL_JAVA.BTL.DTO.Response.Security.RoleResponse;
 import com.BTL_JAVA.BTL.Service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
