@@ -183,7 +183,7 @@ public class CategoryService {
         return CategoryResponse.builder()
                 .categoryId(c.getId())
                 .categoryName(c.getName())
-                .perentId(c.getParent_id())
+                .parentId(c.getParent_id())
                 .image(c.getImageUrl())
                 .productCount(products.size())
                 .products(products)
