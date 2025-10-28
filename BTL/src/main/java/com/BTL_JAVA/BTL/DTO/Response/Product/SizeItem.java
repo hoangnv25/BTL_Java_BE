@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SizeItem {
-    Integer idCategory;
+    Integer idVariation;
     String size;
     Integer stockQuantity;
 }

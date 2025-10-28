@@ -15,7 +15,7 @@ import java.util.List;
 public class CategoryResponse {
         Integer categoryId;
         String categoryName;
-        Integer perentId;
+        Integer parentId;
         String image;
         Integer   productCount;
         List<ProductInCategoryResponse> products;

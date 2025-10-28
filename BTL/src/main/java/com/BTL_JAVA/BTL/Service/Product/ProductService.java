@@ -233,7 +233,7 @@ public class ProductService {
 
             var sizes = list.stream()
                     .map(v -> SizeItem.builder()
-                            .idCategory(v.getId())
+                            .idVariation(v.getId())
                             .size(v.getSize())
                             .stockQuantity(v.getStockQuantity() == null ? 0 : v.getStockQuantity())
                             .build())
