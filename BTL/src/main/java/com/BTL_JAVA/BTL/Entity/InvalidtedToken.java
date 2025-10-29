@@ -1,6 +1,9 @@
 package com.BTL_JAVA.BTL.Entity;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,11 +16,8 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-@Table(name = "invalidated_token")
 public class InvalidtedToken {
     @Id
     String id;
-    
-    @Column(name = "expiry_time")
-    Date expiryTime;
+    Date expỉyTime;
 }

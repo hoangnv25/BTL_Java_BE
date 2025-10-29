@@ -1,13 +1,15 @@
 package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Security.PermissionRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Security.PermissionResponse;
+import com.BTL_JAVA.BTL.DTO.Request.AuthenticationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.PermissionRequest;
+import com.BTL_JAVA.BTL.DTO.Response.PermissionResponse;
 import com.BTL_JAVA.BTL.Service.PermissionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

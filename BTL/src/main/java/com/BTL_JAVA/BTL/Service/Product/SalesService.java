@@ -1,11 +1,11 @@
 package com.BTL_JAVA.BTL.Service.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Sales.SalesCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Sales.SalesUpdateRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Sales.ProductSaleItemRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Sales.SalesResponse;
-import com.BTL_JAVA.BTL.DTO.Response.Product.ProductSaleItemResponse;
+import com.BTL_JAVA.BTL.DTO.Request.SalesCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.SalesUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductSaleItemRequest;
+import com.BTL_JAVA.BTL.DTO.Response.SalesResponse;
+import com.BTL_JAVA.BTL.DTO.Response.ProductSaleItemResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Sales;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.Entity.Product.ProductSale;
@@ -188,7 +188,7 @@ public class SalesService {
                 existing.setSaleValue(item.getValue());
             } else {
                 Product product = productRepository.findById(item.getProductId())
-                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
                 validateSaleValue(item.getValue());
 

@@ -1,11 +1,11 @@
 package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.User.UserCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.User.UserUpdateRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Security.PermissionResponse;
-import com.BTL_JAVA.BTL.DTO.Response.Security.RoleResponse;
-import com.BTL_JAVA.BTL.DTO.Response.User.UserResponse;
+import com.BTL_JAVA.BTL.DTO.Request.UserCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.UserUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Response.PermissionResponse;
+import com.BTL_JAVA.BTL.DTO.Response.RoleResponse;
+import com.BTL_JAVA.BTL.DTO.Response.UserResponse;
 import com.BTL_JAVA.BTL.Entity.Permission;
 import com.BTL_JAVA.BTL.Entity.Role;
 import com.BTL_JAVA.BTL.Entity.User;

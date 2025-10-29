@@ -1,21 +1,18 @@
 package com.BTL_JAVA.BTL.Service.Product;
 
-import com.BTL_JAVA.BTL.DTO.Request.Product.CategoryUpdateRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Product.ProductInCategoryResponse;
+import com.BTL_JAVA.BTL.DTO.Request.CategoryUpdateRequest;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Product.CategoryCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Product.CategoryResponse;
+import com.BTL_JAVA.BTL.DTO.Request.CategoryCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Response.CategoryResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Category;
-import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.CategoryRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
-import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
-import com.BTL_JAVA.BTL.Repository.ProductVariationRepository;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,8 +31,6 @@ public class CategoryService {
       CategoryRepository categoryRepository;
       UploadImageFile uploadImageFile;
       ProductRepository productRepository;
-      ProductVariationRepository productVariationRepository;
-      ProductSaleRepository productSaleRepository;
 
       public ApiResponse<CategoryResponse> create(CategoryCreationRequest request) throws IOException {
           Category cat=Category.builder()
@@ -66,7 +60,7 @@ public class CategoryService {
               productRepository.saveAll(prods);
           }
 
-          return ApiResponse.ok(toResponse(saved));
+          return ApiResponse.ok(toResponse(saved, ids));
 
       }
 
@@ -91,8 +85,7 @@ public class CategoryService {
                 ? Set.of()
                 : c.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
 
-
-        return ApiResponse.ok(toResponse(c));
+        return ApiResponse.ok(toResponse(c, productIds));
     }
 
     public ApiResponse<List<CategoryResponse>> list() {
@@ -102,7 +95,7 @@ public class CategoryService {
             Set<Integer> productIds = (c.getProducts() == null)
                     ? Set.of()
                     : c.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
-            return toResponse(c);
+            return toResponse(c, productIds);
         }).toList();
 
         return ApiResponse.ok(data);
@@ -113,7 +106,7 @@ public class CategoryService {
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         if (request.getCategoryName() != null) cat.setName(request.getCategoryName());
-        if (request.getParentId() != null)     cat.setParent_id(request.getParentId());
+        if (request.getPerentId() != null)     cat.setParent_id(request.getPerentId());
 
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             String url = uploadImageFile.uploadImage(request.getImage());
@@ -146,47 +139,22 @@ public class CategoryService {
         Set<Integer> currentIds = (saved.getProducts() == null) ? Set.of()
                 : saved.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
 
-        return ApiResponse.ok(toResponse(saved));
+        return ApiResponse.ok(toResponse(saved, currentIds));
     }
 
 
-    private CategoryResponse toResponse(Category c) {
-        List<ProductInCategoryResponse> products = (c.getProducts() == null) ? List.of()
-                : c.getProducts().stream().map(p -> {
-
-            // Lấy danh sách ảnh từ các variation của product
-            List<String> variationImages = (p.getProductVariations() == null) ? List.of()
-                    : p.getProductVariations().stream()
-                    .map(ProductVariation::getImage)
-                    .filter(Objects::nonNull)
-                    .toList();
-
-            // Lấy sale active (nếu có) -> saleValue
-            var now = java.time.LocalDateTime.now();
-            var ps = productSaleRepository
-                    .findActiveProductSaleByProductId(p.getProductId(), now)
-                    .stream().findFirst().orElse(null); // vì đảm bảo chỉ có 1 active
-            var saleValue = (ps == null) ? null : ps.getSaleValue();
-
-            return ProductInCategoryResponse.builder()
-                    .productId(p.getProductId())
-                    .title(p.getTitle())
-                    .price(p.getPrice())
-                    .image(p.getImage())
-                    .saleValue(saleValue)
-                    .createdAt(p.getCreatedAt())
-                    .variationCount(variationImages.size())
-                    .variationImages(variationImages)
-                    .build();
-        }).toList();
+    private CategoryResponse toResponse(Category c, Set<Integer> productIds) {
+        Set<Integer> ids = (productIds != null) ? productIds :
+                (c.getProducts() == null ? Set.of() :
+                        c.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet()));
 
         return CategoryResponse.builder()
                 .categoryId(c.getId())
                 .categoryName(c.getName())
-                .parentId(c.getParent_id())
+                .perentId(c.getParent_id())
                 .image(c.getImageUrl())
-                .productCount(products.size())
-                .products(products)
+                .productCount(ids.size())
+                .productIds(ids)
                 .build();
     }
 }

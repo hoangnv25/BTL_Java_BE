@@ -4,10 +4,8 @@ package com.BTL_JAVA.BTL.Entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -36,9 +34,6 @@ public class Product {
     @Column(name = "image")
     String image;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     @JoinColumn(name = "category_id")
     private Category category;
@@ -47,10 +42,6 @@ public class Product {
                fetch = FetchType.LAZY,
     cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     private List<ProductVariation> productVariations;
-
-    @OneToMany(mappedBy = "product",
-               fetch = FetchType.LAZY,
-    cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
-    private List<com.BTL_JAVA.BTL.Entity.Feedback> feedbacks;
-
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductSale> productSales = new ArrayList<>();
 }

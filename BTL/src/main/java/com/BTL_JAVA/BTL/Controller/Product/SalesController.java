@@ -1,9 +1,9 @@
 package com.BTL_JAVA.BTL.Controller.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Sales.SalesCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Sales.SalesUpdateRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Sales.SalesResponse;
+import com.BTL_JAVA.BTL.DTO.Request.SalesCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.SalesUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Response.SalesResponse;
 import com.BTL_JAVA.BTL.Service.Product.SalesService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

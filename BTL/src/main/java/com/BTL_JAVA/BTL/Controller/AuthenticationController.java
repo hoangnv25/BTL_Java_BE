@@ -1,12 +1,8 @@
 package com.BTL_JAVA.BTL.Controller;
 
 import com.BTL_JAVA.BTL.DTO.Request.*;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.AuthenticationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.IntrospectRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.LogoutRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.RefreshRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Auth.AuthenticationResponse;
-import com.BTL_JAVA.BTL.DTO.Response.Auth.IntrospectResponse;
+import com.BTL_JAVA.BTL.DTO.Response.AuthenticationResponse;
+import com.BTL_JAVA.BTL.DTO.Response.IntrospectResponse;
 import com.BTL_JAVA.BTL.Service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;

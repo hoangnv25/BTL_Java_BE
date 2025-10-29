@@ -1,11 +1,11 @@
 package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.Auth.AuthenticationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.IntrospectRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.LogoutRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.RefreshRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Auth.AuthenticationResponse;
-import com.BTL_JAVA.BTL.DTO.Response.Auth.IntrospectResponse;
+import com.BTL_JAVA.BTL.DTO.Request.AuthenticationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.IntrospectRequest;
+import com.BTL_JAVA.BTL.DTO.Request.LogoutRequest;
+import com.BTL_JAVA.BTL.DTO.Request.RefreshRequest;
+import com.BTL_JAVA.BTL.DTO.Response.AuthenticationResponse;
+import com.BTL_JAVA.BTL.DTO.Response.IntrospectResponse;
 import com.BTL_JAVA.BTL.Entity.InvalidtedToken;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;
@@ -76,8 +76,6 @@ public class AuthenticationService {
 
 
    public AuthenticationResponse authenticated(AuthenticationRequest request) {
-
-        log.info("SIGNKEY: {}",SIGNER_KEY);
           var user = userRepository.findByFullName(request.getFullName())
                   .orElseThrow(() ->new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -104,7 +102,7 @@ public class AuthenticationService {
 
             InvalidtedToken invalidtedToken=InvalidtedToken.builder()
                     .id(jit)
-                    .expiryTime(expiryTime)
+                    .expỉyTime(expiryTime)
                     .build();
             invalidtedTokenRepository.save(invalidtedToken);
         }catch (AppException e){
@@ -122,7 +120,7 @@ public class AuthenticationService {
 
         InvalidtedToken invalidtedToken=InvalidtedToken.builder()
                 .id(jit)
-                .expiryTime(expiryTime)
+                .expỉyTime(expiryTime)
                 .build();
         invalidtedTokenRepository.save(invalidtedToken);
 

@@ -1,9 +1,9 @@
 package com.BTL_JAVA.BTL.Service.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Product.CartItemRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Product.UpdateQuantityRequest;
-import com.BTL_JAVA.BTL.DTO.Response.Product.CartItemResponse;
+import com.BTL_JAVA.BTL.DTO.Request.CartItemRequest;
+import com.BTL_JAVA.BTL.DTO.Request.UpdateQuantityRequest;
+import com.BTL_JAVA.BTL.DTO.Response.CartItemResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Cart;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
 import com.BTL_JAVA.BTL.Entity.User;

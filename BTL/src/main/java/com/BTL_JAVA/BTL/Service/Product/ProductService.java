@@ -1,10 +1,11 @@
 package com.BTL_JAVA.BTL.Service.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Product.ProductCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Product.ProductUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductUpdateRequest;
 import com.BTL_JAVA.BTL.DTO.Response.PageResult;
-import com.BTL_JAVA.BTL.DTO.Response.Product.*;
+import com.BTL_JAVA.BTL.DTO.Response.ProductResponse;
+import com.BTL_JAVA.BTL.DTO.Response.ProductVariationResponse;
 import com.BTL_JAVA.BTL.Entity.Product.Category;
 import com.BTL_JAVA.BTL.Entity.Product.Product;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
@@ -12,7 +13,6 @@ import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.CategoryRepository;
 import com.BTL_JAVA.BTL.Repository.ProductRepository;
-import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
 import com.BTL_JAVA.BTL.Repository.ProductVariationRepository;
 import com.BTL_JAVA.BTL.Repository.Spec.ProductSpecs;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
@@ -31,7 +31,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +45,6 @@ public class ProductService {
     CategoryRepository categoryRepository;
     ProductVariationRepository productVariationRepository;
     UploadImageFile uploadImageFile;
-    ProductSaleRepository  productSaleRepository;
 
     @Transactional
     public ApiResponse<ProductResponse> create(ProductCreationRequest req) throws IOException {
@@ -156,16 +154,16 @@ public class ProductService {
     }
 
 
-    public ApiResponse<ProductDetailResponse> get(Integer id) {
+    public ApiResponse<ProductResponse> get(Integer id) {
         Product p = productRepository.findById(id)
                 .orElseThrow(() -> new AppException((ErrorCode.PRODUCT_NOT_FOUND)));
 
         Set<Integer> varIds = (p.getProductVariations() == null) ? Set.of()
                 : p.getProductVariations().stream().map(ProductVariation::getId).collect(Collectors.toSet());
 
-        return ApiResponse.<ProductDetailResponse>builder()
+        return ApiResponse.<ProductResponse>builder()
                 .code(1000).message("Success")
-                .result(toDetailResponse(p))
+                .result(toResponse(p))
                 .build();
     }
 
@@ -209,63 +207,6 @@ public class ProductService {
                 .variations(variations)
                 .build();
     }
-
-    private ProductDetailResponse toDetailResponse(Product p) {
-        // 1) Group variations theo color
-        Map<String, List<ProductVariation>> byColor = new java.util.LinkedHashMap<>();
-        if (p.getProductVariations() != null) {
-            for (var v : p.getProductVariations()) {
-                String color = v.getColor();
-                byColor.computeIfAbsent(color, k -> new java.util.ArrayList<>()).add(v);
-            }
-        }
-
-        // 2) Map từng nhóm color -> ProductVariationGroup (image = ảnh đầu tiên khác null trong nhóm)
-        var groups = byColor.entrySet().stream().map(e -> {
-            String color = e.getKey();
-            var list = e.getValue();
-
-            String image = list.stream()
-                    .map(ProductVariation::getImage)
-                    .filter(java.util.Objects::nonNull)
-                    .findFirst()
-                    .orElse(null);
-
-            var sizes = list.stream()
-                    .map(v -> SizeItem.builder()
-                            .idVariation(v.getId())
-                            .size(v.getSize())
-                            .stockQuantity(v.getStockQuantity() == null ? 0 : v.getStockQuantity())
-                            .build())
-                    .toList();
-
-            return  ProductVariationGroup.builder()
-                    .productId(p.getProductId())
-                    .image(image)
-                    .color(color)
-                    .list(sizes)
-                    .build();
-        }).toList();
-
-        // 3) (Tuỳ chọn) discount: nếu bạn có ProductSaleRepository và sale active duy nhất
-        BigDecimal discount = null;
-         var now = java.time.LocalDateTime.now();
-         var ps = productSaleRepository.findActiveProductSaleByProductId(p.getProductId(), now)
-                                       .stream().findFirst().orElse(null);
-         if (ps != null) discount = ps.getSaleValue();
-
-        // Build body theo format yêu cầu
-        return  ProductDetailResponse.builder()
-                .productId(p.getProductId())
-                .title(p.getTitle())
-                .description(p.getDescription())
-                .price(p.getPrice())
-                .image(p.getImage())    // map sang "thumbnail"
-                .saleValue(discount)
-                .listVariations(groups)
-                .build();
-    }
-
 
     public ApiResponse<PageResult<ProductResponse>> search(
             String keyword,

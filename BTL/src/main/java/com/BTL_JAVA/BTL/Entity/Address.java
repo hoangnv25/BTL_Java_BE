@@ -7,16 +7,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "addresses")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "address")
+@Builder
 public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
-    Integer id;
+    private int id;
 
     @Column(name = "street", nullable = false)
     private String street;

@@ -1,11 +1,10 @@
 package com.BTL_JAVA.BTL.Controller.Product;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
-import com.BTL_JAVA.BTL.DTO.Request.Product.ProductCreationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Product.ProductUpdateRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductCreationRequest;
+import com.BTL_JAVA.BTL.DTO.Request.ProductUpdateRequest;
 import com.BTL_JAVA.BTL.DTO.Response.PageResult;
-import com.BTL_JAVA.BTL.DTO.Response.Product.ProductDetailResponse;
-import com.BTL_JAVA.BTL.DTO.Response.Product.ProductResponse;
+import com.BTL_JAVA.BTL.DTO.Response.ProductResponse;
 import com.BTL_JAVA.BTL.Service.Product.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDetailResponse>> get(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<ProductResponse>> get(@PathVariable Integer id) {
         return ResponseEntity.ok(productService.get(id));
     }
 
