@@ -4,7 +4,10 @@ package com.BTL_JAVA.BTL.Entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -32,6 +35,9 @@ public class Product {
 
     @Column(name = "image")
     String image;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
     @JoinColumn(name = "category_id")
