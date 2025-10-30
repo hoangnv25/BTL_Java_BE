@@ -11,6 +11,7 @@ import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.RoleRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
+import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
 import com.BTL_JAVA.BTL.enums.Role;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,19 +46,27 @@ public class UserService {
     @Autowired
     RoleRepository roleRepository;
 
-    public User createUser(UserCreationRequest request){
+    @Autowired
+    UploadImageFile uploadImageFile;
+
+    public User createUser(UserCreationRequest request) throws IOException {
 
         User user = new User();
-        if(userRepository.existsByFullName(request.getFullName())){
+        if(userRepository.existsByFullName(request.getUsername())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        user.setFullName(request.getFullName());
+        user.setFullName(request.getUsername());
        // user.setPassword(request.getPassword());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
+
+        if(request.getAvatar() != null&&!request.getAvatar().isEmpty()){
+            String url=uploadImageFile.uploadImage(request.getAvatar());
+            user.setAvatar(url);
+        }
 
         HashSet<String> roles = new HashSet<String>();
         roles.add(Role.USER.toString());
@@ -72,9 +82,10 @@ public class UserService {
                ()->new AppException(ErrorCode.USER_NOT_EXISTED)
        );
        UserResponse userResponse = new UserResponse();
-       userResponse.setFullName(user.getFullName());
+       userResponse.setUserName(user.getFullName());
        userResponse.setEmail(user.getEmail());
        userResponse.setPhoneNumber(user.getPhoneNumber());
+       userResponse.setAvatar(user.getAvatar());
 
         Set<RoleResponse> roleResponses = user.getRoles().stream()
                 .map(role -> {
@@ -113,21 +124,25 @@ public class UserService {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setPhoneNumber(user.getPhoneNumber());
-        userResponse.setFullName(user.getFullName());
-//        userResponse.setPassword(user.getPassword());
+        userResponse.setUserName(user.getFullName());
+        userResponse.setAvatar(user.getAvatar());
         userResponse.setEmail(user.getEmail());
-
 
         return userResponse;
     }
 
-    public UserResponse updateUser(int id, UserUpdateRequest request){
+    public UserResponse updateUser(int id, UserUpdateRequest request) throws IOException {
         User user=userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         UserResponse userResponse = new UserResponse();
-        user.setFullName(request.getFullName());
+        user.setFullName(request.getUserName());
         user.setPassword(request.getPassword());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
+
+        if(request.getAvatar()!=null&&!request.getAvatar().isEmpty()){
+            String url=uploadImageFile.uploadImage(request.getAvatar());
+        }
+
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         var roles=roleRepository.findAllById(request.getRoles());
         user.setRoles(new  HashSet<>(roles));
@@ -135,7 +150,7 @@ public class UserService {
         userRepository.save(user);
 
         userResponse.setId(user.getId());
-        userResponse.setFullName(user.getFullName());
+        userResponse.setUserName(user.getFullName());
         userResponse.setEmail(user.getEmail());
         userResponse.setPhoneNumber(user.getPhoneNumber());
         Set<RoleResponse> roleResponses = user.getRoles().stream()
