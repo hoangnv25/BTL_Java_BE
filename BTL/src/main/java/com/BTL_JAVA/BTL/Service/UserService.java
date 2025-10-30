@@ -82,7 +82,7 @@ public class UserService {
                ()->new AppException(ErrorCode.USER_NOT_EXISTED)
        );
        UserResponse userResponse = new UserResponse();
-       userResponse.setFullName(user.getFullName());
+       userResponse.setUserName(user.getFullName());
        userResponse.setEmail(user.getEmail());
        userResponse.setPhoneNumber(user.getPhoneNumber());
        userResponse.setAvatar(user.getAvatar());
@@ -124,7 +124,7 @@ public class UserService {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setPhoneNumber(user.getPhoneNumber());
-        userResponse.setFullName(user.getFullName());
+        userResponse.setUserName(user.getFullName());
         userResponse.setAvatar(user.getAvatar());
         userResponse.setEmail(user.getEmail());
 
@@ -134,7 +134,7 @@ public class UserService {
     public UserResponse updateUser(int id, UserUpdateRequest request) throws IOException {
         User user=userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         UserResponse userResponse = new UserResponse();
-        user.setFullName(request.getFullName());
+        user.setFullName(request.getUserName());
         user.setPassword(request.getPassword());
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
@@ -150,7 +150,7 @@ public class UserService {
         userRepository.save(user);
 
         userResponse.setId(user.getId());
-        userResponse.setFullName(user.getFullName());
+        userResponse.setUserName(user.getFullName());
         userResponse.setEmail(user.getEmail());
         userResponse.setPhoneNumber(user.getPhoneNumber());
         Set<RoleResponse> roleResponses = user.getRoles().stream()

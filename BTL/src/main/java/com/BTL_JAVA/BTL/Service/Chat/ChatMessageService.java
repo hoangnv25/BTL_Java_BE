@@ -42,6 +42,7 @@ public class ChatMessageService {
         return ChatMessageResponse.builder()
                 .messageId(m.getMessageId())
                 .conversationId(m.getConversation().getConversationId())
+                .senderId(m.getSender().getId())
                 .senderSummary(toSenderSummary(m.getSender()))
                 .content(m.getContent())
                 .me(Objects.equals(m.getSender().getId(), currentUserId))

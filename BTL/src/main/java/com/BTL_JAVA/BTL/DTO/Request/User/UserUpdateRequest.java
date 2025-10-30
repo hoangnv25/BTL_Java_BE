@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class UserUpdateRequest {
 
-    private String fullName;
+    private String userName;
 
     private String email;
 

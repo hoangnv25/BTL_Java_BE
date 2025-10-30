@@ -55,7 +55,7 @@ public class UserController {
             // 3.1 Map các field cơ bản của User
             UserResponse ur = new UserResponse();
             ur.setId(u.getId());
-            ur.setFullName(u.getFullName());
+            ur.setUserName(u.getFullName());
             ur.setEmail(u.getEmail());
             ur.setPhoneNumber(u.getPhoneNumber());
 
