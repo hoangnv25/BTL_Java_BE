@@ -25,7 +25,6 @@ public class ProductResponse {
         Integer variationCount;
         BigDecimal saleValue;
         LocalDateTime createdAt;
-//        Set<Integer> variationIds;
         List<ProductVariationResponse> variations;
 }
 

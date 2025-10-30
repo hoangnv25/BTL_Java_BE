@@ -82,6 +82,7 @@ public class UserService {
                ()->new AppException(ErrorCode.USER_NOT_EXISTED)
        );
        UserResponse userResponse = new UserResponse();
+       userResponse.setId(user.getId());
        userResponse.setUserName(user.getFullName());
        userResponse.setEmail(user.getEmail());
        userResponse.setPhoneNumber(user.getPhoneNumber());

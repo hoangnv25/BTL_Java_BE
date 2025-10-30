@@ -206,6 +206,7 @@ public class ProductService {
                 .image(p.getImage())
                 .categoryId(p.getCategory() == null ? null : p.getCategory().getId())
                 .variationCount(variations.size())
+                .createdAt(p.getCreatedAt())
                 .variations(variations)
                 .build();
     }
@@ -262,6 +263,7 @@ public class ProductService {
                 .price(p.getPrice())
                 .image(p.getImage())    // map sang "thumbnail"
                 .saleValue(discount)
+                .createdAt(p.getCreatedAt())
                 .listVariations(groups)
                 .build();
     }
