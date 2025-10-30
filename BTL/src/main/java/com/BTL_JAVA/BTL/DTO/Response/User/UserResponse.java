@@ -22,6 +22,8 @@ public class UserResponse {
 
      String phoneNumber;
 
+     String avatar;
+
      Set<RoleResponse> roles;
 }
 
