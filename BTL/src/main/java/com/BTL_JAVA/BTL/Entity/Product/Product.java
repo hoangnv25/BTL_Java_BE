@@ -39,7 +39,7 @@ public class Product {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
