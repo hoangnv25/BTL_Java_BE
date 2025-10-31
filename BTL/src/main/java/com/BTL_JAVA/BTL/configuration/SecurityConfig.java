@@ -17,9 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
-import java.util.List;
-
 
 @Configuration
 @EnableWebSecurity
@@ -69,21 +66,19 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // @Bean
-    // public CorsFilter corsFilter() {
-    //     CorsConfiguration corsConfiguration = new CorsConfiguration();
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-    //     corsConfiguration.addAllowedOrigin("*");
-    //     corsConfiguration.addAllowedHeader("*");
-    //     corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
 
-    //     UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-    //     urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 
-    //     return new CorsFilter(urlBasedCorsConfigurationSource);
-    // }
-    // Tuấn ơi đoạn này cấu hình chưa đủ chặt và chưa xử lý OPTIONS đúng cách.
-    // Khi FE chạy ở 2 port khác nhau, Spring Security sẽ block preflight (OPTIONS).
+        return new CorsFilter(urlBasedCorsConfigurationSource);
+    }
 
 
     @Bean
@@ -101,20 +96,5 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-
-    // Thêm 30/10
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-    
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
 }
