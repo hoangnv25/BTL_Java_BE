@@ -132,7 +132,7 @@ public class UserService {
         return userResponse;
     }
 
-    public UserResponse updateUser(int id, UserUpdateRequest request) throws IOException {
+    public UserResponse  updateUser(int id, UserUpdateRequest request) throws IOException {
         User user=userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         UserResponse userResponse = new UserResponse();
         user.setFullName(request.getUserName());

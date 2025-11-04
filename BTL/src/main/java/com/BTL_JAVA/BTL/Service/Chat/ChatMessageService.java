@@ -9,6 +9,7 @@ import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Repository.Chat.ChatMessageRepository;
 import com.BTL_JAVA.BTL.Repository.Chat.ConversationRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
+import com.corundumstudio.socketio.SocketIOServer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,6 +30,7 @@ public class ChatMessageService {
     ChatMessageRepository chatMessageRepository;
     UserRepository userRepository;
     ConversationService conversationService;
+    SocketIOServer socketIOServer;
 
     SenderSummary toSenderSummary(User user) {
         return SenderSummary.builder()
@@ -86,6 +88,13 @@ public class ChatMessageService {
         conv.setLastMessage(req.getContent());
         conv.setUpdatedAt(LocalDateTime.now());
         conversationRepository.save(conv);
+
+        //public socket event to client is conversation
+        ChatMessageResponse response = toMessageResponse(m, sender.getId());
+        String message = req.getContent();
+        socketIOServer.getRoomOperations("conversation_" + conv.getConversationId())
+                .sendEvent("message", response);
+
 
         // “currentUserId” để set cờ me — ở đây mình coi người gửi là current
         return toMessageResponse(m, sender.getId());
