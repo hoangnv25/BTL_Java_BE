@@ -135,18 +135,21 @@ public class UserService {
     public UserResponse  updateUser(int id, UserUpdateRequest request) throws IOException {
         User user=userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         UserResponse userResponse = new UserResponse();
-        user.setFullName(request.getUserName());
-        user.setPassword(request.getPassword());
-        user.setEmail(request.getEmail());
-        user.setPhoneNumber(request.getPhoneNumber());
+        if(request.getUserName()!=null)  user.setFullName(request.getUserName());
+        if(request.getPassword()!=null) user.setPassword(request.getPassword());
+        if(request.getEmail()!=null) user.setEmail(request.getEmail());
+        if(request.getPhoneNumber()!=null) user.setPhoneNumber(request.getPhoneNumber());
 
         if(request.getAvatar()!=null&&!request.getAvatar().isEmpty()){
             String url=uploadImageFile.uploadImage(request.getAvatar());
+            user.setAvatar(url);
         }
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        var roles=roleRepository.findAllById(request.getRoles());
-        user.setRoles(new  HashSet<>(roles));
+        if(request.getPassword()!=null) user.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
 
         userRepository.save(user);
 
@@ -154,6 +157,7 @@ public class UserService {
         userResponse.setUserName(user.getFullName());
         userResponse.setEmail(user.getEmail());
         userResponse.setPhoneNumber(user.getPhoneNumber());
+        userResponse.setAvatar(user.getAvatar());
         Set<RoleResponse> roleResponses = user.getRoles().stream()
                 .map(role -> {
                     RoleResponse resp = new RoleResponse();
