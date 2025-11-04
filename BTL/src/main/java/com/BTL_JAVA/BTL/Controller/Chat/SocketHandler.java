@@ -48,7 +48,7 @@ public class SocketHandler {
             log.info("Client connected: {}",client.getSessionId());
             //Persist webSocketSession
             WebSocketSession webSocketSession= WebSocketSession.builder()
-                    .socketSesionId(client.getSessionId().toString())
+                    .socketSessionId(client.getSessionId().toString())
                     .userId(introspectResponse.getUserId())
                     .createdAt(Instant.now())
                     .build();

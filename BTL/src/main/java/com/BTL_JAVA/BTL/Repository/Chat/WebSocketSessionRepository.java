@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WebSocketSessionRepository extends JpaRepository<WebSocketSession, String> {
-    void deleteByWebSocketSessionId(String sessionId);
+    void deleteBySocketSessionId(String sessionId);
 }

@@ -20,6 +20,6 @@ public class WebSocketSessionService {
     }
 
     public void deleteSession(String sessionId) {
-        webSocketSessionRepository.deleteById(sessionId);
+        webSocketSessionRepository.deleteBySocketSessionId(sessionId);
     }
 }

@@ -21,7 +21,7 @@ public class WebSocketSession {
     @Id
     String id;
 
-    String socketSesionId;
+    String socketSessionId;
 
     String userId;
 
