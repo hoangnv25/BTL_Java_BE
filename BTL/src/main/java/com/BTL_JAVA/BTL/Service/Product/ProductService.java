@@ -149,6 +149,10 @@ public class ProductService {
         if (p.getProductVariations() != null && !p.getProductVariations().isEmpty()) {
             throw new AppException(ErrorCode.VARIATION_EXISTED);
         }
+        var productSales = productSaleRepository.findByProduct(p);
+        if (!productSales.isEmpty()) {
+            productSaleRepository.deleteAll(productSales);
+        }
 
         productRepository.delete(p);
         return ApiResponse.<Void>builder()
