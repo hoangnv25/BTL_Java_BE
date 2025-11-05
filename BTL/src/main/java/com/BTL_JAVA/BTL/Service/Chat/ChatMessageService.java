@@ -48,7 +48,7 @@ public class ChatMessageService {
                 .senderSummary(toSenderSummary(m.getSender()))
                 .content(m.getContent())
                 .me(Objects.equals(m.getSender().getId(), currentUserId))
-                .createdAt(m.getCreatedAt())
+                .createdAt(m.getCreatedAt().toString())
                 .build();
     }
 
@@ -91,7 +91,6 @@ public class ChatMessageService {
 
         //public socket event to client is conversation
         ChatMessageResponse response = toMessageResponse(m, sender.getId());
-        String message = req.getContent();
         socketIOServer.getRoomOperations("conversation_" + conv.getConversationId())
                 .sendEvent("message", response);
 

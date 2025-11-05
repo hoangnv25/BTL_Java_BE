@@ -17,7 +17,7 @@ public class ChatMessageResponse {
     int senderId;
     String content;
     boolean me;
-    LocalDateTime createdAt;
+    String createdAt;
     SenderSummary senderSummary;
 
 }
