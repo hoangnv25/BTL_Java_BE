@@ -107,11 +107,14 @@ public class UserController {
         return userService.getMyInfo();
     }
 
-    @PutMapping("/{userId}")
-    public UserResponse updateUser( @PathVariable("userId") int userId,@RequestBody UserUpdateRequest request) throws IOException {
-
-        return userService.updateUser(userId,request);
+    @PutMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserResponse updateUser(
+            @PathVariable("userId") int userId,
+            @ModelAttribute UserUpdateRequest request
+    ) throws IOException {
+        return userService.updateUser(userId, request);
     }
+
 
     @DeleteMapping("/{userId}")
     public String deleteUser(@PathVariable("userId") int userId){
