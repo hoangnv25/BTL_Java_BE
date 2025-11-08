@@ -103,6 +103,10 @@ public class OrderService {
         Address address = addressRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
 
+        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
+            throw new AppException(ErrorCode.PHONE_NUMBER_EMPTY);
+        }
+
         // 3. Tạo đơn hàng
         Order order = Order.builder()
                 .user(user)

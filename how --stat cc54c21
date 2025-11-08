@@ -1,0 +1,34 @@
+[33m55fab45[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32msafeMode[m[33m)[m HEAD@{0}: checkout: moving from Tung.dev to safeMode
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{1}: checkout: moving from safeMode to Tung.dev
+[33m55fab45[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32msafeMode[m[33m)[m HEAD@{2}: commit (merge): Merge branch 'Tuandeptraidev' of https://github.com/tuanvu118/BTL_JAVA into safeMode
+[33mdfa06ab[m HEAD@{3}: checkout: moving from Tuandeptraidev to safeMode
+[33mf6a7fe0[m[33m ([m[1;31morigin/Tuandeptraidev[m[33m, [m[1;32mTuandeptraidev[m[33m)[m HEAD@{4}: checkout: moving from safeMode to Tuandeptraidev
+[33mdfa06ab[m HEAD@{5}: reset: moving to HEAD
+[33mdfa06ab[m HEAD@{6}: pull origin Tuandeptraidev: updating HEAD
+[33mdfa06ab[m HEAD@{7}: checkout: moving from safeMode to safeMode
+[33mdfa06ab[m HEAD@{8}: pull origin master: Merge made by the 'ort' strategy.
+[33mcc54c21[m HEAD@{9}: commit: Fix some error file
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{10}: checkout: moving from Tung.dev to safeMode
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{11}: checkout: moving from safeMode to Tung.dev
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{12}: checkout: moving from Tung.dev to safeMode
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{13}: checkout: moving from safeMode to Tung.dev
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{14}: merge Tung.dev: Fast-forward
+[33m0f54d58[m HEAD@{15}: checkout: moving from Tung.dev to safeMode
+[33m4d53598[m[33m ([m[1;31morigin/safeMode[m[33m, [m[1;31morigin/Tung.dev[m[33m, [m[1;32mTung.dev[m[33m)[m HEAD@{16}: commit: Clean up unused imports after refactoring
+[33m4f228f3[m HEAD@{17}: commit: Fix all imports after DTO restructuring
+[33m4f096c9[m HEAD@{18}: commit: Update package declarations for Response DTOs
+[33m79b0224[m HEAD@{19}: commit: WIP: Reorganize DTO structure - move Request and Response into subfolders
+[33m0f54d58[m HEAD@{20}: checkout: moving from safeMode to Tung.dev
+[33m0f54d58[m HEAD@{21}: checkout: moving from Tung.dev to safeMode
+[33m0f54d58[m HEAD@{22}: reset: moving to safeMode
+[33m5c157bd[m HEAD@{23}: checkout: moving from safeMode to Tung.dev
+[33m0f54d58[m HEAD@{24}: commit: Fix bugs and add features: validation, sale logic, remove sensitive config
+[33mb276d1e[m HEAD@{25}: commit (merge): Merge remote-tracking branch 'origin/Trungdeptraisieucapvutru' into safeMode
+[33m5c157bd[m HEAD@{26}: checkout: moving from safeMode to safeMode
+[33m5c157bd[m HEAD@{27}: checkout: moving from Tung.dev to safeMode
+[33m5c157bd[m HEAD@{28}: commit: Create feedback
+[33m07019e8[m HEAD@{29}: commit: Create order logic and update review
+[33m7d874f0[m HEAD@{30}: pull origin master: Merge made by the 'ort' strategy.
+[33m9ad2206[m HEAD@{31}: commit: Add Reviews section
+[33mf5b2db0[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{32}: checkout: moving from master to Tung.dev
+[33mf5b2db0[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{33}: clone: from https://github.com/tuanvu118/BTL_JAVA
