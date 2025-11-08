@@ -44,10 +44,6 @@ public class AuthenticationService {
     UserRepository userRepository;
     OutboundIdentityClient outboundIdentityClient;
     InvalidtedTokenRepository invalidtedTokenRepository;
-    OutboundUserClient outboundUserClient;
-    OutboundFacebookIdentityClient outboundFacebookIdentityClient;
-    OutboundFacebookUserClient outboundFacebookUserClient;
-    RoleRepository roleRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -86,17 +82,17 @@ public class AuthenticationService {
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token=request.getToken();
+        boolean isValid=true;
+        SignedJWT signedJWT=null;
 
        try {
-           verifyToken(token,false);
-       }catch (AppException e){
-           return IntrospectResponse.builder()
-                   .valid(false)
-                   .build();
-
+           signedJWT= verifyToken(token,false);
+       }catch (AppException | JOSEException|ParseException e){
+        isValid=false;
        }
         return IntrospectResponse.builder()
-                .valid(true)
+                .valid(isValid)
+                .userId(Objects.nonNull(signedJWT)? signedJWT.getJWTClaimsSet().getSubject():null)
                 .build();
     }
 
@@ -113,8 +109,7 @@ public class AuthenticationService {
 
         var userInfo = outboundUserClient.getUserInfo("json", response.getAccessToken());
 
-        log.info("GOOGLE USER INFO {}", userInfo);
-        
+
         // Tìm role USER đã tồn tại trong DB
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findById(com.BTL_JAVA.BTL.enums.Role.USER.toString())
@@ -150,7 +145,6 @@ public class AuthenticationService {
                     .redirectUri(REDIRECT_URI)
                     .grantType(GRANT_TYPE)
                     .build());
-            log.info("FACEBOOK TOKEN RESPONSE: {}", response);
 
             if (response.getAccessToken() == null) {
                 log.error("Facebook did not return access token");
@@ -160,17 +154,16 @@ public class AuthenticationService {
             // Get user info from Facebook
             log.info("Attempting to get Facebook user info...");
             var userInfo = outboundFacebookUserClient.getUserInfo(
-                    "id,name,email,picture", 
+                    "id,name,email,picture",
                     response.getAccessToken()
             );
 
-            log.info("FACEBOOK USER INFO: {}", userInfo);
-            
+
             if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
                 log.error("Facebook user email is null or empty");
                 throw new AppException(ErrorCode.UNAUTHENTICATED);
             }
-            
+
             // Tìm role USER đã tồn tại trong DB
             Set<Role> roles = new HashSet<>();
             Role userRole = roleRepository.findById(com.BTL_JAVA.BTL.enums.Role.USER.toString())
@@ -200,7 +193,7 @@ public class AuthenticationService {
                     .token(token)
                     .authenticated(true)
                     .build();
-                    
+
         } catch (Exception e) {
             log.error("Facebook authentication error: ", e);
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -326,14 +319,8 @@ public class AuthenticationService {
         if(!CollectionUtils.isEmpty(user.getRoles()))
             user.getRoles().forEach(role->{
                 stringJoiner.add("ROLE_"+role.getNameRoles());
-                // Xử lý permissions an toàn để tránh lazy loading exception
-                try {
-                    if(!CollectionUtils.isEmpty(role.getPermissions())){
-                        role.getPermissions().forEach(permission->stringJoiner.add(permission.getNamePermission()));
-                    }
-                } catch (Exception e) {
-                    log.warn("Could not load permissions for role: {}", role.getNameRoles());
-                }
+                if(CollectionUtils.isEmpty(role.getPermissions())){}
+                  role.getPermissions().forEach(permission->stringJoiner.add(permission.getNamePermission()));
         });
 
         return stringJoiner.toString();

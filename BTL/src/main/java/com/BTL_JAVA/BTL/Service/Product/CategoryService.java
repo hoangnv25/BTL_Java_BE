@@ -16,7 +16,6 @@ import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
 import com.BTL_JAVA.BTL.Repository.ProductVariationRepository;
 import com.BTL_JAVA.BTL.Service.Cloudinary.UploadImageFile;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -175,6 +174,7 @@ public class CategoryService {
                     .price(p.getPrice())
                     .image(p.getImage())
                     .saleValue(saleValue)
+                    .createdAt(p.getCreatedAt())
                     .variationCount(variationImages.size())
                     .variationImages(variationImages)
                     .build();

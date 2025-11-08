@@ -14,9 +14,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,8 +34,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping()
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<User> createUser(@ModelAttribute @Valid UserCreationRequest request) throws IOException {
         ApiResponse<User> response = new ApiResponse<>();
 
         response.setResult(userService.createUser(request));
@@ -53,7 +55,7 @@ public class UserController {
             // 3.1 Map các field cơ bản của User
             UserResponse ur = new UserResponse();
             ur.setId(u.getId());
-            ur.setFullName(u.getFullName());
+            ur.setUserName(u.getFullName());
             ur.setEmail(u.getEmail());
             ur.setPhoneNumber(u.getPhoneNumber());
 
@@ -105,11 +107,14 @@ public class UserController {
         return userService.getMyInfo();
     }
 
-    @PutMapping("/{userId}")
-    public UserResponse updateUser( @PathVariable("userId") int userId,@RequestBody UserUpdateRequest request){
-
-        return userService.updateUser(userId,request);
+    @PutMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserResponse updateUser(
+            @PathVariable("userId") int userId,
+            @ModelAttribute UserUpdateRequest request
+    ) throws IOException {
+        return userService.updateUser(userId, request);
     }
+
 
     @DeleteMapping("/{userId}")
     public String deleteUser(@PathVariable("userId") int userId){

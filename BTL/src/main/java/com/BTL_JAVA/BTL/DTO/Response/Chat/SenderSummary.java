@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.DTO.Response.Auth;
+package com.BTL_JAVA.BTL.DTO.Response.Chat;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-    boolean valid;
-    String userId;
+public class SenderSummary {
+    int senderId;
+    String senderName;
+    String avatar;
 }
-
