@@ -1,23 +1,24 @@
 package com.BTL_JAVA.BTL.Service;
 
-import com.BTL_JAVA.BTL.DTO.Request.Auth.AuthenticationRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.IntrospectRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.LogoutRequest;
-import com.BTL_JAVA.BTL.DTO.Request.Auth.RefreshRequest;
+import com.BTL_JAVA.BTL.DTO.Request.Auth.*;
 import com.BTL_JAVA.BTL.DTO.Response.Auth.AuthenticationResponse;
 import com.BTL_JAVA.BTL.DTO.Response.Auth.IntrospectResponse;
 import com.BTL_JAVA.BTL.Entity.InvalidtedToken;
+import com.BTL_JAVA.BTL.Entity.Role;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Exception.AppException;
 import com.BTL_JAVA.BTL.Exception.ErrorCode;
 import com.BTL_JAVA.BTL.Repository.InvalidtedTokenRepository;
+import com.BTL_JAVA.BTL.Repository.httpclient.OutboundIdentityClient;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
+import com.BTL_JAVA.BTL.Repository.httpclient.OutboundUserClient;
+import com.BTL_JAVA.BTL.Repository.httpclient.OutboundFacebookIdentityClient;
+import com.BTL_JAVA.BTL.Repository.httpclient.OutboundFacebookUserClient;
+import com.BTL_JAVA.BTL.Repository.RoleRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.JWTClaimNames;
 import com.nimbusds.jwt.JWTClaimsSet;
-
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -43,8 +42,12 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
-
+    OutboundIdentityClient outboundIdentityClient;
     InvalidtedTokenRepository invalidtedTokenRepository;
+    OutboundUserClient outboundUserClient;
+    OutboundFacebookIdentityClient outboundFacebookIdentityClient;
+    OutboundFacebookUserClient outboundFacebookUserClient;
+    RoleRepository roleRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -57,6 +60,29 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refresh-duration}")
     protected  long REFRESH_DURATION;
+
+    @NonFinal
+    @Value("${outbound.identity.google.client-id}")
+    protected String CLIENT_ID;
+
+    @NonFinal
+    @Value("${outbound.identity.google.client-secret}")
+    protected String CLIENT_SECRET;
+
+    @NonFinal
+    @Value("${outbound.identity.redirect-uri}")
+    protected String REDIRECT_URI;
+
+    @NonFinal
+    @Value("${outbound.identity.facebook.client-id}")
+    protected String FACEBOOK_CLIENT_ID;
+
+    @NonFinal
+    @Value("${outbound.identity.facebook.client-secret}")
+    protected String FACEBOOK_CLIENT_SECRET;
+
+    @NonFinal
+    protected String GRANT_TYPE = "authorization_code";
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token=request.getToken();
@@ -74,6 +100,112 @@ public class AuthenticationService {
                 .build();
     }
 
+    public AuthenticationResponse outboundAuthenticate(String code) {
+        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                .code(code)
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .redirectUri(REDIRECT_URI)
+                .grantType(GRANT_TYPE)
+                .build());
+        log.info("GOOGLE TOKEN RESPONSE {}", response);
+
+
+        var userInfo = outboundUserClient.getUserInfo("json", response.getAccessToken());
+
+        log.info("GOOGLE USER INFO {}", userInfo);
+        
+        // Tìm role USER đã tồn tại trong DB
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findById(com.BTL_JAVA.BTL.enums.Role.USER.toString())
+                .orElseThrow(() -> {
+                    log.error("Role USER not found in database");
+                    return new AppException(ErrorCode.UNCATEGORIED_EXCEPTION);
+                });
+        roles.add(userRole);
+
+        var user = userRepository.findByFullName(userInfo.getName())
+                .orElseGet(() -> userRepository.save(User.builder()
+                                .fullName(userInfo.getName())
+                                .email(userInfo.getEmail())
+                                .roles(roles)
+                        .build())
+                );
+
+        var token= generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+    }
+
+    public AuthenticationResponse facebookOutboundAuthenticate(String code) {
+        try {
+            log.info("Attempting to exchange Facebook code for token...");
+            var response = outboundFacebookIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                    .code(code)
+                    .clientId(FACEBOOK_CLIENT_ID)
+                    .clientSecret(FACEBOOK_CLIENT_SECRET)
+                    .redirectUri(REDIRECT_URI)
+                    .grantType(GRANT_TYPE)
+                    .build());
+            log.info("FACEBOOK TOKEN RESPONSE: {}", response);
+
+            if (response.getAccessToken() == null) {
+                log.error("Facebook did not return access token");
+                throw new AppException(ErrorCode.UNAUTHENTICATED);
+            }
+
+            // Get user info from Facebook
+            log.info("Attempting to get Facebook user info...");
+            var userInfo = outboundFacebookUserClient.getUserInfo(
+                    "id,name,email,picture", 
+                    response.getAccessToken()
+            );
+
+            log.info("FACEBOOK USER INFO: {}", userInfo);
+            
+            if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
+                log.error("Facebook user email is null or empty");
+                throw new AppException(ErrorCode.UNAUTHENTICATED);
+            }
+            
+            // Tìm role USER đã tồn tại trong DB
+            Set<Role> roles = new HashSet<>();
+            Role userRole = roleRepository.findById(com.BTL_JAVA.BTL.enums.Role.USER.toString())
+                    .orElseThrow(() -> {
+                        log.error("Role USER not found in database");
+                        return new AppException(ErrorCode.UNCATEGORIED_EXCEPTION);
+                    });
+            roles.add(userRole);
+
+            // Find or create user
+            var user = userRepository.findByEmail(userInfo.getEmail())
+                    .orElseGet(() -> {
+                        log.info("Creating new user with email: {}", userInfo.getEmail());
+                        return userRepository.save(User.builder()
+                                .fullName(userInfo.getName())
+                                .email(userInfo.getEmail())
+                                .roles(roles)
+                                .build());
+                    });
+
+            log.info("User authenticated successfully: {}", user.getEmail());
+
+            // Generate JWT token
+            var token = generateToken(user);
+
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .authenticated(true)
+                    .build();
+                    
+        } catch (Exception e) {
+            log.error("Facebook authentication error: ", e);
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+    }
 
    public AuthenticationResponse authenticated(AuthenticationRequest request) {
 
@@ -194,8 +326,14 @@ public class AuthenticationService {
         if(!CollectionUtils.isEmpty(user.getRoles()))
             user.getRoles().forEach(role->{
                 stringJoiner.add("ROLE_"+role.getNameRoles());
-                if(CollectionUtils.isEmpty(role.getPermissions())){}
-                  role.getPermissions().forEach(permission->stringJoiner.add(permission.getNamePermission()));
+                // Xử lý permissions an toàn để tránh lazy loading exception
+                try {
+                    if(!CollectionUtils.isEmpty(role.getPermissions())){
+                        role.getPermissions().forEach(permission->stringJoiner.add(permission.getNamePermission()));
+                    }
+                } catch (Exception e) {
+                    log.warn("Could not load permissions for role: {}", role.getNameRoles());
+                }
         });
 
         return stringJoiner.toString();

@@ -28,6 +28,7 @@ public enum ErrorCode {
     FEEDBACK_NOT_FOUND(1016, "Feedback not found.", HttpStatus.NOT_FOUND),
     ALREADY_FEEDBACKED(1017, "Ban da danh gia san pham nay roi.", HttpStatus.BAD_REQUEST),
     NOT_PURCHASED_PRODUCT(1018, "Ban chua mua san pham nay.", HttpStatus.BAD_REQUEST),
+    PHONE_NUMBER_EMPTY(1019, "Ban khong duoc de trong so dien thoai", HttpStatus.BAD_REQUEST),
 
     // Variation / Category (102x)
     INVALID_VARIATION(1020, "Variation is invalid", HttpStatus.BAD_REQUEST),
