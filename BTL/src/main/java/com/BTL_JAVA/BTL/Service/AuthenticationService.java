@@ -44,6 +44,10 @@ public class AuthenticationService {
     UserRepository userRepository;
     OutboundIdentityClient outboundIdentityClient;
     InvalidtedTokenRepository invalidtedTokenRepository;
+    OutboundUserClient outboundUserClient;
+    OutboundFacebookIdentityClient outboundFacebookIdentityClient;
+    OutboundFacebookUserClient outboundFacebookUserClient;
+    RoleRepository roleRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
