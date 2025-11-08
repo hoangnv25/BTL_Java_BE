@@ -167,7 +167,7 @@ public class AuthenticationService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getFullName())
-                .issuer("devteira.com")
+                .issuer("shop.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALIDATION_DURATION, ChronoUnit.SECONDS).toEpochMilli()

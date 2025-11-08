@@ -17,6 +17,5 @@ public class ProductVariationUpdateRequest {
     String  color;
     Integer stockQuantity;
 
-
     MultipartFile image;
 }
