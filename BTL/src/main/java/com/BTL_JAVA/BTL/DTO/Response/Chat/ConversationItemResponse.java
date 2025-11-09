@@ -11,13 +11,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChatMessageResponse {
-    int messageId;
+public class ConversationItemResponse {
     int conversationId;
-    int senderId;
-    String content;
-    boolean me;
-    String createdAt;
+    String lastMessage;
+    LocalDateTime updatedAt;
     SenderSummary senderSummary;
-
 }
