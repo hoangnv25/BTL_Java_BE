@@ -207,6 +207,7 @@ public class CartService {
     private List<CartItemResponse> toCartItemResponseList(List<Cart> cartItems) {
         return cartItems.stream()
                 .map(cart -> CartItemResponse.builder()
+                        .cart_id(cart.getId())
                         .product_id(cart.getProductVariation().getProduct().getProductId())
                         .product_variation_id(cart.getProductVariation().getId())
                         .quantity(cart.getQuantity())
