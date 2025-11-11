@@ -70,7 +70,7 @@ public class UserService {
 
         HashSet<String> roles = new HashSet<String>();
         roles.add(Role.USER.toString());
-//        user.setRoles(roles);
+       //user.setRoles(roles);
 
         return userRepository.save(user);
     }
