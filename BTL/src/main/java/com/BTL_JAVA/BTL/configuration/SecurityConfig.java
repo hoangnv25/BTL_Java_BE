@@ -60,6 +60,9 @@ public class SecurityConfig {
                         .requestMatchers("/address/**").authenticated()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/topic/**").permitAll()
+                        .requestMatchers("/app/**").permitAll()
                         .anyRequest().authenticated()
                 );
 //                .httpBasic(Customizer.withDefaults())  // bật Basic Auth

@@ -9,7 +9,6 @@ import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.Repository.Chat.ChatMessageRepository;
 import com.BTL_JAVA.BTL.Repository.Chat.ConversationRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
-import com.corundumstudio.socketio.SocketIOServer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 
 @Slf4j
 @Service
@@ -30,7 +31,8 @@ public class ChatMessageService {
     ChatMessageRepository chatMessageRepository;
     UserRepository userRepository;
     ConversationService conversationService;
-    SocketIOServer socketIOServer;
+    SimpMessagingTemplate messagingTemplate;
+
 
     SenderSummary toSenderSummary(User user) {
         return SenderSummary.builder()
@@ -91,9 +93,10 @@ public class ChatMessageService {
 
         //public socket event to client is conversation
         ChatMessageResponse response = toMessageResponse(m, sender.getId());
-        socketIOServer.getRoomOperations("conversation_" + conv.getConversationId())
-                .sendEvent("message", response);
-
+        messagingTemplate.convertAndSend(
+                "/topic/conversation/" + conv.getConversationId(),
+                response
+        );
 
         // “currentUserId” để set cờ me — ở đây mình coi người gửi là current
         return toMessageResponse(m, sender.getId());
