@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String [] PUBLIC_ENDPOINTS = {"/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh", "/auth/outbound/authentication", "/auth/outbound/facebook"};
+    private final String [] PUBLIC_ENDPOINTS = {"/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh", "/auth/outbound/authentication"};
 
 
     @Autowired
@@ -56,7 +56,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/feedback/**").permitAll()
-                        .requestMatchers("/cart/**").authenticated()
+                        // Cart endpoints - cần chỉ định rõ từng HTTP method
+                        .requestMatchers(HttpMethod.GET, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/cart/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/cart/**").authenticated()
                         .requestMatchers("/address/**").authenticated()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()

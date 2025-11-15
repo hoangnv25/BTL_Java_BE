@@ -189,8 +189,8 @@ public class CartService {
 
     private User getCurrentUser() {
         var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        User user = userRepository.findByFullName(name).orElseThrow(
+        String userId = context.getAuthentication().getName();
+        User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         );
         return user;

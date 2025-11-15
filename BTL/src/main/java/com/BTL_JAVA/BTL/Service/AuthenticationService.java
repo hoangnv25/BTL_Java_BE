@@ -12,8 +12,6 @@ import com.BTL_JAVA.BTL.Repository.InvalidtedTokenRepository;
 import com.BTL_JAVA.BTL.Repository.httpclient.OutboundIdentityClient;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import com.BTL_JAVA.BTL.Repository.httpclient.OutboundUserClient;
-import com.BTL_JAVA.BTL.Repository.httpclient.OutboundFacebookIdentityClient;
-import com.BTL_JAVA.BTL.Repository.httpclient.OutboundFacebookUserClient;
 import com.BTL_JAVA.BTL.Repository.RoleRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -45,8 +43,6 @@ public class AuthenticationService {
     OutboundIdentityClient outboundIdentityClient;
     InvalidtedTokenRepository invalidtedTokenRepository;
     OutboundUserClient outboundUserClient;
-    OutboundFacebookIdentityClient outboundFacebookIdentityClient;
-    OutboundFacebookUserClient outboundFacebookUserClient;
     RoleRepository roleRepository;
 
     @NonFinal
@@ -72,14 +68,6 @@ public class AuthenticationService {
     @NonFinal
     @Value("${outbound.identity.redirect-uri}")
     protected String REDIRECT_URI;
-
-    @NonFinal
-    @Value("${outbound.identity.facebook.client-id}")
-    protected String FACEBOOK_CLIENT_ID;
-
-    @NonFinal
-    @Value("${outbound.identity.facebook.client-secret}")
-    protected String FACEBOOK_CLIENT_SECRET;
 
     @NonFinal
     protected String GRANT_TYPE = "authorization_code";
@@ -123,7 +111,8 @@ public class AuthenticationService {
                 });
         roles.add(userRole);
 
-        var user = userRepository.findByFullName(userInfo.getName())
+        // Tìm user theo EMAIL (duy nhất) thay vì fullName (có thể trùng)
+        var user = userRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> userRepository.save(User.builder()
                                 .fullName(userInfo.getName())
                                 .email(userInfo.getEmail())
@@ -137,71 +126,6 @@ public class AuthenticationService {
                 .token(token)
                 .authenticated(true)
                 .build();
-    }
-
-    public AuthenticationResponse facebookOutboundAuthenticate(String code) {
-        try {
-            log.info("Attempting to exchange Facebook code for token...");
-            var response = outboundFacebookIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
-                    .code(code)
-                    .clientId(FACEBOOK_CLIENT_ID)
-                    .clientSecret(FACEBOOK_CLIENT_SECRET)
-                    .redirectUri(REDIRECT_URI)
-                    .grantType(GRANT_TYPE)
-                    .build());
-
-            if (response.getAccessToken() == null) {
-                log.error("Facebook did not return access token");
-                throw new AppException(ErrorCode.UNAUTHENTICATED);
-            }
-
-            // Get user info from Facebook
-            log.info("Attempting to get Facebook user info...");
-            var userInfo = outboundFacebookUserClient.getUserInfo(
-                    "id,name,email,picture",
-                    response.getAccessToken()
-            );
-
-
-            if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
-                log.error("Facebook user email is null or empty");
-                throw new AppException(ErrorCode.UNAUTHENTICATED);
-            }
-
-            // Tìm role USER đã tồn tại trong DB
-            Set<Role> roles = new HashSet<>();
-            Role userRole = roleRepository.findById(com.BTL_JAVA.BTL.enums.Role.USER.toString())
-                    .orElseThrow(() -> {
-                        log.error("Role USER not found in database");
-                        return new AppException(ErrorCode.UNCATEGORIED_EXCEPTION);
-                    });
-            roles.add(userRole);
-
-            // Find or create user
-            var user = userRepository.findByEmail(userInfo.getEmail())
-                    .orElseGet(() -> {
-                        log.info("Creating new user with email: {}", userInfo.getEmail());
-                        return userRepository.save(User.builder()
-                                .fullName(userInfo.getName())
-                                .email(userInfo.getEmail())
-                                .roles(roles)
-                                .build());
-                    });
-
-            log.info("User authenticated successfully: {}", user.getEmail());
-
-            // Generate JWT token
-            var token = generateToken(user);
-
-            return AuthenticationResponse.builder()
-                    .token(token)
-                    .authenticated(true)
-                    .build();
-
-        } catch (Exception e) {
-            log.error("Facebook authentication error: ", e);
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
     }
 
    public AuthenticationResponse authenticated(AuthenticationRequest request) {
@@ -256,9 +180,9 @@ public class AuthenticationService {
         invalidtedTokenRepository.save(invalidtedToken);
 
 
-        var username=signToken.getJWTClaimsSet().getSubject();
+        var userId=signToken.getJWTClaimsSet().getSubject();
 
-        var user=userRepository.findByFullName(username).orElseThrow(() ->new AppException(ErrorCode.UNAUTHENTICATED));
+        var user=userRepository.findById(Integer.parseInt(userId)).orElseThrow(() ->new AppException(ErrorCode.UNAUTHENTICATED));
 
         var token= generateToken(user);
 
@@ -294,7 +218,7 @@ public class AuthenticationService {
        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getFullName())
+                .subject(String.valueOf(user.getId())) // Dùng user ID (duy nhất) thay vì fullName
                 .issuer("devteira.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
@@ -302,6 +226,7 @@ public class AuthenticationService {
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope",buildScope(user))
+                .claim("fullName", user.getFullName()) // Thêm fullName vào claim để frontend có thể hiển thị
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
