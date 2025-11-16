@@ -37,6 +37,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(1023, "Category is not exists", HttpStatus.NOT_FOUND),
     PRODUCT_EXISTED(1024, "Product already exists", HttpStatus.BAD_REQUEST),
     VARIATION_EXISTED(1025, "Variation already exists", HttpStatus.BAD_REQUEST),
+    CANNOT_CANCEL_PAID_ORDER(1026, "Cannot cancel order that has been paid. Please request refund.", HttpStatus.BAD_REQUEST),
 
     // ===== Sales (2xxx) =====
     SALE_NOT_EXISTED(2001, "Sale khong ton tai", HttpStatus.NOT_FOUND),

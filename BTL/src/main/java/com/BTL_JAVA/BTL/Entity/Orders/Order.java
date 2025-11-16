@@ -1,5 +1,6 @@
 package com.BTL_JAVA.BTL.Entity.Orders;
 
+import com.BTL_JAVA.BTL.Entity.Payment;
 import com.BTL_JAVA.BTL.Entity.User;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -52,6 +53,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<OrderDetail> orderDetails;
+
+    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    Payment payment;
 
     @PrePersist
     protected void onCreate() {

@@ -1,6 +1,7 @@
 package com.BTL_JAVA.BTL.DTO.Response;
 
 import com.BTL_JAVA.BTL.enums.OrderStatus;
+import com.BTL_JAVA.BTL.enums.PaymentStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,9 @@ public class OrderResponse {
     LocalDateTime orderDate;
     OrderStatus status;
     Double totalAmount;
+    PaymentStatus paymentStatus;
+    String paymentMethod;
+    LocalDateTime paymentDate;
     List<OrderDetailResponse> orderDetails;
     @Data
     @Builder
