@@ -3,6 +3,7 @@ package com.BTL_JAVA.BTL.DTO.Request.User;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class UserCreationRequest {
 
     @Size(min = 2,message = "USERNAME_INVALID")
-    private String fullName;
+    private String username;
 
     private String email;
 
@@ -21,5 +22,7 @@ public class UserCreationRequest {
     private String password;
 
     private String phoneNumber;
+
+    private MultipartFile avatar;
 
 }

@@ -1,4 +1,4 @@
-package com.BTL_JAVA.BTL.Controller;
+package com.BTL_JAVA.BTL.Controller.User;
 
 import com.BTL_JAVA.BTL.DTO.Request.ApiResponse;
 import com.BTL_JAVA.BTL.DTO.Request.Security.RoleRequest;
