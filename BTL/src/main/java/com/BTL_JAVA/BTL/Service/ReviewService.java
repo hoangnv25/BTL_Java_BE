@@ -37,8 +37,8 @@ public class ReviewService {
     // tạo mới review
     @Transactional
     public ReviewResponse createReview(ReviewRequest request) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByFullName(username)
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        User user = userRepository.findById(Integer.parseInt(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         // Nếu có rating thì cập nhật
@@ -65,8 +65,8 @@ public class ReviewService {
         Review review = reviewRepository.findByIdWithUser(reviewId)
                 .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!review.getUser().getFullName().equals(username)) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        if (review.getUser().getId() != Integer.parseInt(userId)) {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
@@ -96,8 +96,8 @@ public class ReviewService {
         Review review = reviewRepository.findByIdWithUser(reviewId)
                 .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByFullName(username)
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        User currentUser = userRepository.findById(Integer.parseInt(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         boolean isAdmin = currentUser.getRoles().stream()
@@ -112,8 +112,8 @@ public class ReviewService {
 
     // Lấy reviews theo user - Format đặc biệt với rating ở ngoài
     public UserReviewsResponse getReviewByUserId(Integer userId) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByFullName(username)
+        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        User currentUser = userRepository.findById(Integer.parseInt(userIdStr))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         List<Review> reviews = reviewRepository.findByUserIdWithUser(userId);
@@ -145,8 +145,8 @@ public class ReviewService {
     
     // Phân trang cho reviews của user cụ thể
     public Page<ReviewResponse> getReviewsByUserIdPaginated(int userId, int page, int size) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByFullName(username)
+        String userIdStr = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        User currentUser = userRepository.findById(Integer.parseInt(userIdStr))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (currentUser.getId() != userId) {
@@ -198,6 +198,7 @@ public class ReviewService {
         return ReviewResponse.builder()
                 .id(review.getId())
                 .fullName(review.getUser().getFullName())
+                .avatar(review.getUser().getAvatar())
                 .rating(review.getUser().getRating())
                 .comment(review.getComment())
                 .createdAt(review.getCreatedAt())

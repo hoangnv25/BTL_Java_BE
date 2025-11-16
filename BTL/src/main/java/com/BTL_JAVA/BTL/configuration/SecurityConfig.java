@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String [] PUBLIC_ENDPOINTS = {"/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh", "/auth/outbound/authentication", "/auth/outbound/facebook"};
+    private final String [] PUBLIC_ENDPOINTS = {"/users","/auth/token","/auth/introspect","/auth/logout","/auth/refresh", "/auth/outbound/authentication"};
 
 
     @Autowired
@@ -56,10 +56,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/feedback/**").permitAll()
-                        .requestMatchers("/cart/**").authenticated()
+                        // Cart endpoints - cần chỉ định rõ từng HTTP method
+                        .requestMatchers(HttpMethod.GET, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/cart").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/cart/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/cart/**").authenticated()
                         .requestMatchers("/address/**").authenticated()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/topic/**").permitAll()
+                        .requestMatchers("/app/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/payment_infor").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
                         .anyRequest().authenticated()
@@ -68,19 +75,38 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//
+//        corsConfiguration.addAllowedOrigin("*");
+//        corsConfiguration.addAllowedHeader("*");
+//        corsConfiguration.addAllowedMethod("*");
+//
+//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+//
+//        return new CorsFilter(urlBasedCorsConfigurationSource);
+//    }
+        @Bean
+        public CorsFilter corsFilter() {
+            CorsConfiguration config = new CorsConfiguration();
+            config.addAllowedOrigin("http://localhost:5173");  // FE React
+            config.addAllowedHeader("*");
+            config.addAllowedMethod("*");
+            config.setAllowCredentials(true);
 
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+            // ⭐ Quan trọng cho SockJS: /ws và /ws/info
+            source.registerCorsConfiguration("/ws/**", config);
 
-        return new CorsFilter(urlBasedCorsConfigurationSource);
-    }
+            // Các API còn lại (REST, swagger,…)
+            source.registerCorsConfiguration("/**", config);
+
+            return new CorsFilter(source);
+        }
+
 
 
     @Bean
