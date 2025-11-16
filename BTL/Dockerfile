@@ -1,35 +1,27 @@
-# ==========================
-# Stage 1: Build Spring Boot JAR
-# ==========================
+# Stage 1: Build
 FROM maven:3.9.8-amazoncorretto-21 AS build
 
+# Set working directory inside container
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
 
-RUN mvn package -DskipTests
+# Copy source code and pom.xml into container
+COPY BTL/pom.xml .
+COPY BTL/src ./src
 
+# Build source with Maven
+RUN mvn clean package -DskipTests
 
-# ==========================
-# Stage 2: Run with Nginx + Java
-# ==========================
+# Stage 2: Runtime image
 FROM amazoncorretto:21.0.4
 
 # Set working directory
 WORKDIR /app
 
-# Copy JAR từ stage build
+# Copy the built JAR file from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Install Nginx
-RUN yum install -y nginx && mkdir -p /run/nginx
-
-# Copy Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port (Railway sẽ inject PORT thật)
-ENV PORT=8080
+# Expose port (Railway auto maps this)
 EXPOSE 8080
 
-# Start cả Nginx và Java cùng lúc
-CMD service nginx start && java -jar app.jar
+# Run the app
+ENTRYPOINT ["java", "-jar", "app.jar"]
