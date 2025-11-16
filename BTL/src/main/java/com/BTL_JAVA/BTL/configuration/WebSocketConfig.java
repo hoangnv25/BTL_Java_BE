@@ -23,7 +23,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // endpoint để FE connect websocket
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")
+//                .setAllowedOriginPatterns("*")
+                .setAllowedOrigins("http://localhost:5173")
                 .withSockJS(); // cho phép SockJS fallback
     }
 }
