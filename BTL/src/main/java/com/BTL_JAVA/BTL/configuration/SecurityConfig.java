@@ -90,6 +90,7 @@ public class SecurityConfig {
         @Bean
         public CorsFilter corsFilter() {
             CorsConfiguration config = new CorsConfiguration();
+            config.addAllowedOrigin("https://lok-fe.vercel.app");
             config.addAllowedOrigin("http://localhost:5173");  // FE React
             config.addAllowedHeader("*");
             config.addAllowedMethod("*");
