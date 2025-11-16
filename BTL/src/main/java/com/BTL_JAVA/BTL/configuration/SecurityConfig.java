@@ -36,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(cors -> cors.configure(http)) // ✅ Bật CORS (cú pháp mới)
+                .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> jwtConfigurer
                                 .decoder(customJwtDecoder)
@@ -63,7 +63,8 @@ public class SecurityConfig {
                         .requestMatchers("/address/**").authenticated()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/ws/info").permitAll()
                         .requestMatchers("/topic/**").permitAll()
                         .requestMatchers("/app/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/payment_infor").permitAll()
