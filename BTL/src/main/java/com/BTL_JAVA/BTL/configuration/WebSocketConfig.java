@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // endpoint để FE connect websocket
         registry.addEndpoint("/ws")
 //                .setAllowedOriginPatterns("*")
-                .setAllowedOrigins("*") // thêm origin deploy
+                .setAllowedOrigins("http://localhost:5173", "https://lok-fe.vercel.app") // thêm origin deploy
                 .withSockJS(); // cho phép SockJS fallback
     }
 }
