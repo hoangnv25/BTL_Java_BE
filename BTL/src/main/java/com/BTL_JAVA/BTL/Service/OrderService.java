@@ -103,9 +103,9 @@ public class OrderService {
         Address address = addressRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
 
-        if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
-            throw new AppException(ErrorCode.PHONE_NUMBER_EMPTY);
-        }
+        // if (user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) {
+        //     throw new AppException(ErrorCode.PHONE_NUMBER_EMPTY);
+        // } Cho phép người dùng null sđt khi tạo đơn (nhưng đơn vẫn có sđt)
 
         // 3. Tạo đơn hàng
         Order order = Order.builder()
