@@ -77,8 +77,8 @@ public class UserService {
 
     public UserResponse getMyInfo(){
        var context = SecurityContextHolder.getContext();
-       String name=context.getAuthentication().getName();
-       User user =userRepository.findByFullName(name).orElseThrow(
+       String userId=context.getAuthentication().getName(); // Lấy user ID từ token subject
+       User user =userRepository.findById(Integer.parseInt(userId)).orElseThrow(
                ()->new AppException(ErrorCode.USER_NOT_EXISTED)
        );
        UserResponse userResponse = new UserResponse();

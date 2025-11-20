@@ -6,6 +6,7 @@ import com.BTL_JAVA.BTL.DTO.Response.OrderResponse;
 import com.BTL_JAVA.BTL.Entity.Address;
 import com.BTL_JAVA.BTL.Entity.Orders.Order;
 import com.BTL_JAVA.BTL.Entity.Orders.OrderDetail;
+import com.BTL_JAVA.BTL.Entity.Payment;
 import com.BTL_JAVA.BTL.Entity.Product.ProductSale;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
 import com.BTL_JAVA.BTL.Entity.User;
@@ -16,6 +17,7 @@ import com.BTL_JAVA.BTL.Repository.OrderRepository;
 import com.BTL_JAVA.BTL.Repository.ProductSaleRepository;
 import com.BTL_JAVA.BTL.Repository.UserRepository;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
+import com.BTL_JAVA.BTL.enums.PaymentStatus;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +50,8 @@ public class OrderService {
 
     // Các phương thức lấy người và ktra quyền
     User getCurrentAuthenticatedUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByFullName(username)
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        return userRepository.findById(Integer.parseInt(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
@@ -75,7 +77,7 @@ public class OrderService {
         
         // Nếu có sale, lấy discount lớn nhất (phần tử đầu tiên do đã sort DESC)
         if (!productSales.isEmpty()) {
-            BigDecimal maxDiscount = productSales.get(0).getSaleValue();
+            BigDecimal maxDiscount = productSales.getFirst().getSaleValue();
             
             if (maxDiscount != null && maxDiscount.compareTo(BigDecimal.ZERO) > 0) {
                 // Áp dụng discount: giá cuối = giá gốc * (1 - discount)
@@ -176,6 +178,18 @@ public class OrderService {
 
         User user = getCurrentAuthenticatedUser();
 
+        // ✅ KIỂM TRA PAYMENT
+        Payment payment = order.getPayment();
+        if (payment != null && payment.getStatus() == PaymentStatus.COMPLETED) {
+            // Nếu đã thanh toán VNPAY, cần hoàn tiền
+            if ("VNPAY".equals(payment.getPaymentMethod())) {
+                throw new AppException(ErrorCode.CANNOT_CANCEL_PAID_ORDER);
+                // Hoặc gọi API hoàn tiền của VNPay
+            }
+            // Nếu là CASH, cho phép hủy và đánh dấu cần hoàn tiền
+            payment.setStatus(PaymentStatus.REFUNDED);
+        }
+
         // Kiểm tra quyền: Admin có thể hủy tất cả, user thường chỉ hủy của mình
         boolean isAdmin = user.getRoles().stream()
                 .anyMatch(role -> role.getNameRoles().equals("ADMIN"));
@@ -215,8 +229,8 @@ public class OrderService {
             throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
-        // Chỉ có thể cập nhật nếu đơn hàng đang ở trạng thái PENDING
-        if (order.getStatus() != OrderStatus.PENDING) {
+        // Chỉ có thể cập nhật nếu đơn hàng đang ở trạng thái PENDING & APPROVED
+        if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.APPROVED) {
             throw new AppException(ErrorCode.CANNOT_CANCEL_ORDER);
         }
 
@@ -304,6 +318,11 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
+        Payment payment = order.getPayment();
+        if (payment != null && payment.getStatus() == PaymentStatus.COMPLETED) {
+            throw new AppException(ErrorCode.CANNOT_CANCEL_PAID_ORDER);
+        }
+
         orderRepository.delete(order);
     }
 
@@ -341,6 +360,16 @@ public class OrderService {
                         .build())
                 .collect(Collectors.toList());
 
+        PaymentStatus paymentStatus = null;
+        String paymentMethod = null;
+        LocalDateTime paymentDate = null;
+
+        if (order.getPayment() != null) {
+            paymentStatus = order.getPayment().getStatus();
+            paymentMethod = order.getPayment().getPaymentMethod();
+            paymentDate = order.getPayment().getPaymentDate();
+        }
+
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUser().getId())
@@ -351,6 +380,9 @@ public class OrderService {
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
+                .paymentStatus(paymentStatus)
+                .paymentMethod(paymentMethod)
+                .paymentDate(paymentDate)
                 .orderDetails(detailResponses)
                 .build();
     }
