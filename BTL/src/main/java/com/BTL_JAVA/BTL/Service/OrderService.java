@@ -63,12 +63,6 @@ public class OrderService {
         }
     }
 
-    /**
-     * Tính giá cuối cùng cho sản phẩm, có áp dụng sale nếu có
-     * @param productId ID của sản phẩm
-     * @param originalPrice Giá gốc
-     * @return Giá sau khi áp dụng sale (nếu có)
-     */
     private Double calculateFinalPrice(Integer productId, Double originalPrice) {
         LocalDateTime now = LocalDateTime.now();
         
