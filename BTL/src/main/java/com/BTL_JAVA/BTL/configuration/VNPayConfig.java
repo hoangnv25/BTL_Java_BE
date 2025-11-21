@@ -4,11 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class VNPayConfig {
@@ -16,66 +12,8 @@ public class VNPayConfig {
     public static String vnp_ReturnUrl = "http://localhost:8080/api/payment/payment_infor";
     public static String vnp_TmnCode = "7YDBF7NX";
     public static String secretKey = "NI5NF7HYUT9EU51KI1R10A9XWLCP46Z5";
-    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
     public static String vnp_Version = "2.1.0";
     public static String vnp_Command = "pay";
-
-    public static String md5(String message) {
-        String digest = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(message.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder(2 * hash.length);
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b & 0xff));
-            }
-            digest = sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            digest = "";
-        } catch (NoSuchAlgorithmException ex) {
-            digest = "";
-        }
-        return digest;
-    }
-
-    public static String Sha256(String message) {
-        String digest = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(message.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder(2 * hash.length);
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b & 0xff));
-            }
-            digest = sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            digest = "";
-        } catch (NoSuchAlgorithmException ex) {
-            digest = "";
-        }
-        return digest;
-    }
-
-    //Util for VNPAY
-    public static String hashAllFields(Map<String, String> fields) throws UnsupportedEncodingException {
-        List<String> fieldNames = new ArrayList<>(fields.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder sb = new StringBuilder();
-
-        for (Iterator<String> itr = fieldNames.iterator(); itr.hasNext();) {
-            String fieldName = itr.next();
-            String fieldValue = fields.get(fieldName);
-            if (fieldValue != null && fieldValue.length() > 0) {
-                sb.append(fieldName).append("=")
-                        .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-            }
-            if (itr.hasNext()) {
-                sb.append("&");
-            }
-        }
-
-        return hmacSHA512(secretKey, sb.toString());
-    }
 
     public static String hmacSHA512(final String key, final String data) {
         try {

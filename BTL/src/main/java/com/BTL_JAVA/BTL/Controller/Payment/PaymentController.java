@@ -8,6 +8,7 @@ import com.BTL_JAVA.BTL.Entity.Payment;
 import com.BTL_JAVA.BTL.Entity.Product.ProductVariation;
 import com.BTL_JAVA.BTL.Repository.OrderRepository;
 import com.BTL_JAVA.BTL.Repository.PaymentRepository;
+import com.BTL_JAVA.BTL.Service.Payment.PaymentService;
 import com.BTL_JAVA.BTL.configuration.VNPayConfig;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import com.BTL_JAVA.BTL.enums.PaymentStatus;
@@ -32,6 +33,9 @@ public class PaymentController {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createPayment(
@@ -254,6 +258,15 @@ public class PaymentController {
         return ResponseEntity.ok().body(vnpayApiResponse);
     }
 
+    @PutMapping("/{paymentId}/status")
+    public ResponseEntity<?> updatePaymentStatus(
+            @PathVariable Integer paymentId,
+            @RequestParam PaymentStatus status) {  // URL: /api/payment/10/status?status=COMPLETED
+
+        PaymentResponse paymentResponse = paymentService.updatePaymentStatus(paymentId, status);
+        return ResponseEntity.ok(paymentResponse);
+    }
+
     // HUỶ ORDER, TRẢ LẠI STOCK
     private void cancelOrderAndRestoreStock(Order order) {
         try {
@@ -267,11 +280,8 @@ public class PaymentController {
             order.setStatus(OrderStatus.CANCELED);
             orderRepository.save(order);
 
-            System.out.println("Đã huỷ order #" + order.getId() + " và trả lại stock");
-
         } catch (Exception e) {
-            System.err.println("Lỗi khi huỷ order #" + order.getId() + ": " + e.getMessage());
-            throw new RuntimeException("Lỗi hệ thống khi huỷ order");
+            throw new RuntimeException("Lỗi khi huỷ order #" + order.getId(), e);
         }
     }
 }
