@@ -34,16 +34,6 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/outbound/facebook")
-    ApiResponse<AuthenticationResponse> facebookOutboundAuthenticate(@RequestParam("code") String code) {
-        var result = authenticationService.facebookOutboundAuthenticate(code);
-        return ApiResponse.<AuthenticationResponse>builder()
-                .code(1000)
-                .message("Đăng nhập Facebook thành công!")
-                .result(result)
-                .build();
-    }
-
     @PostMapping("/token")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         var result=authenticationService.authenticated(request);

@@ -39,8 +39,8 @@ public class FeedbackService {
 
     // Lấy user hiện tại
     private User getCurrentAuthenticatedUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByFullName(username)
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName(); // Lấy user ID từ token
+        return userRepository.findById(Integer.parseInt(userId))
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 

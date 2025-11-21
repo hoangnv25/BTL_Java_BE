@@ -12,8 +12,10 @@ import com.BTL_JAVA.BTL.Service.Payment.PaymentService;
 import com.BTL_JAVA.BTL.configuration.VNPayConfig;
 import com.BTL_JAVA.BTL.enums.OrderStatus;
 import com.BTL_JAVA.BTL.enums.PaymentStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +39,8 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    @PreAuthorize("isAuthenticated()")
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> createPayment(
             @RequestParam("orderId") Integer orderId,
@@ -183,6 +187,8 @@ public class PaymentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     @PostMapping("/cash/confirm")
     public ResponseEntity<?> confirmCashPayment(@RequestParam("orderId") Integer orderId) {
         Order order = orderRepository.findById(orderId)
@@ -201,6 +207,9 @@ public class PaymentController {
         payment.setPaymentDate(LocalDateTime.now());
         paymentRepository.save(payment);
 
+        order.setStatus(OrderStatus.APPROVED);
+        orderRepository.save(order);
+
         PaymentResponse response = PaymentResponse.builder()
                 .id(payment.getId())
                 .orderId(order.getId())
@@ -212,6 +221,7 @@ public class PaymentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Transactional
     @GetMapping("/payment_infor")
     public ResponseEntity<?> paymentInfor(
             @RequestParam Map<String, String> allParams) {
@@ -235,6 +245,9 @@ public class PaymentController {
                 payment.setPaymentDate(LocalDateTime.now());
                 payment.setResponseData(allParams.toString());
                 paymentRepository.save(payment);
+
+                order.setStatus(OrderStatus.APPROVED);
+                orderRepository.save(order);
 
                 vnpayApiResponse.setCode("OK");
                 vnpayApiResponse.setMessage("Thanh toán thành công! Đơn hàng #" + order.getId() + " đã được xác nhận.");

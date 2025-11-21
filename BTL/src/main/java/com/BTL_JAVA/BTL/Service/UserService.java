@@ -70,15 +70,15 @@ public class UserService {
 
         HashSet<String> roles = new HashSet<String>();
         roles.add(Role.USER.toString());
-//        user.setRoles(roles);
+       //user.setRoles(roles);
 
         return userRepository.save(user);
     }
 
     public UserResponse getMyInfo(){
        var context = SecurityContextHolder.getContext();
-       String name=context.getAuthentication().getName();
-       User user =userRepository.findByFullName(name).orElseThrow(
+       String userId=context.getAuthentication().getName(); // Lấy user ID từ token subject
+       User user =userRepository.findById(Integer.parseInt(userId)).orElseThrow(
                ()->new AppException(ErrorCode.USER_NOT_EXISTED)
        );
        UserResponse userResponse = new UserResponse();
