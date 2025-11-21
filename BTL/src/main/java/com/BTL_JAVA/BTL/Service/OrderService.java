@@ -172,15 +172,12 @@ public class OrderService {
 
         User user = getCurrentAuthenticatedUser();
 
-        // ✅ KIỂM TRA PAYMENT
         Payment payment = order.getPayment();
         if (payment != null && payment.getStatus() == PaymentStatus.COMPLETED) {
             // Nếu đã thanh toán VNPAY, cần hoàn tiền
             if ("VNPAY".equals(payment.getPaymentMethod())) {
                 throw new AppException(ErrorCode.CANNOT_CANCEL_PAID_ORDER);
-                // Hoặc gọi API hoàn tiền của VNPay
             }
-            // Nếu là CASH, cho phép hủy và đánh dấu cần hoàn tiền
             payment.setStatus(PaymentStatus.REFUNDED);
         }
 
@@ -274,7 +271,7 @@ public class OrderService {
         return mapToOrderResponse(order);
     }
 
-    // Lấy tất cả order từ tất cả user - Tối ưu với JOIN FETCH
+    // Lấy tất cả order từ tất cả user
     @Transactional
     public List<OrderResponse> getAllOrderFromAllUser() {
         User currentUser = getCurrentAuthenticatedUser();
@@ -286,7 +283,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    // CHỉnh sửa status - Load details để return đầy đủ thông tin
+    // CHỉnh sửa status
     @Transactional
     public OrderResponse updateOrderStatus(Integer orderId, OrderStatus orderStatus) {
         User user = getCurrentAuthenticatedUser();
@@ -297,6 +294,10 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         order.setStatus(orderStatus);
+        // check nếu là COMPLETED thì chuyển Payment thành COMPLETED
+        if (orderStatus == OrderStatus.COMPLETED) {
+            order.getPayment().setStatus(PaymentStatus.COMPLETED);
+        }
         Order updatedOrder = orderRepository.save(order);
 
         return mapToOrderResponse(updatedOrder);
