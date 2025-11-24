@@ -51,71 +51,46 @@ public class CartService {
 
     public ApiResponse<List<CartItemResponse>> addToCart(CartItemRequest request) {
         try {
-            log.info("=== START ADD TO CART ===");
             User user = getCurrentUser();
-            log.info("User found: ID={}, Name={}", user.getId(), user.getFullName());
-
-            log.info("Request data: product_variation_id={}, quantity={}",
-                    request.getProduct_variation_id(), request.getQuantity());
-
             if (request.getQuantity() <= 0) {
-                log.error("Invalid quantity: {}", request.getQuantity());
                 throw new AppException(ErrorCode.INVALID_QUANTITY);
             }
 
             // Tìm product variation
-            log.info("Looking for product variation with ID: {}", request.getProduct_variation_id());
             ProductVariation variation = productVariationRepository.findById(request.getProduct_variation_id())
-                    .orElseThrow(() -> {
-                        log.error("Product variation not found: {}", request.getProduct_variation_id());
-                        return new AppException(ErrorCode.PRODUCT_VARIATION_NOT_FOUND);
-                    });
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIATION_NOT_FOUND));
 
             // Tìm cart item hiện tại
-            log.info("Looking for existing cart item...");
             Cart existingCart = findCartItemByUserAndVariation(user, variation);
-            log.info("Existing cart item: {}", existingCart != null ? "FOUND ID=" + existingCart.getId() : "NOT FOUND");
 
             int totalQuantity = request.getQuantity();
             if (existingCart != null) {
                 totalQuantity += existingCart.getQuantity();
-                log.info("Existing quantity: {}, New quantity: {}, Total: {}",
-                        existingCart.getQuantity(), request.getQuantity(), totalQuantity);
             }
 
             // Kiểm tra stock
-            log.info("Stock quantity: {}, Required quantity: {}", variation.getStockQuantity(), totalQuantity);
             if (totalQuantity > variation.getStockQuantity()) {
-                log.error("Not enough stock");
                 throw new AppException(ErrorCode.NOT_ENOUGH_STOCK);
             }
 
             // Lưu cart
             if (existingCart != null) {
-                log.info("Updating existing cart item...");
                 existingCart.setQuantity(totalQuantity);
-                Cart savedCart = cartRepository.save(existingCart);
-                log.info("Cart item updated successfully: ID={}", savedCart.getId());
+                cartRepository.save(existingCart);
             } else {
-                log.info("Creating new cart item...");
                 Cart newCart = Cart.builder()
                         .user(user)
                         .productVariation(variation)
                         .quantity(totalQuantity)
                         .build();
-                Cart savedCart = cartRepository.save(newCart);
-                log.info("Cart item created successfully: ID={}", savedCart.getId());
+                cartRepository.save(newCart);
             }
 
-            log.info("=== END ADD TO CART - SUCCESS ===");
             return getCart();
 
         } catch (AppException e) {
-            log.error("AppException in addToCart: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("UNEXPECTED ERROR in addToCart: {}", e.getMessage(), e);
-            e.printStackTrace(); // In full stack trace
             throw new AppException(ErrorCode.CART_UPDATE_FAILED);
         }
     }

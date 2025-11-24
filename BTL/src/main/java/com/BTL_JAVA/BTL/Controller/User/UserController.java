@@ -43,31 +43,24 @@ public class UserController {
     }
     @GetMapping()
      List<UserResponse> getAllUsers() {
-        // [1] Lấy data entity
         List<User> users = userService.getAllUsers();
 
-        // [2] Khai báo kết quả trả về
         List<UserResponse> result = new ArrayList<>();
 
-        // [3] Duyệt từng User và map sang UserResponse
         for (User u : users) {
-            // 3.1 Map các field cơ bản của User
             UserResponse ur = new UserResponse();
             ur.setId(u.getId());
             ur.setUserName(u.getFullName());
             ur.setEmail(u.getEmail());
             ur.setPhoneNumber(u.getPhoneNumber());
+            ur.setAvatar(u.getAvatar());
 
-            // 3.2 Map roles của User
             Set<RoleResponse> roleDtos = new LinkedHashSet<>();
             Set<Role> roles = (u.getRoles() != null) ? u.getRoles() : java.util.Set.of();
-
             for (Role r : roles) {
                 RoleResponse rr = new RoleResponse();
                 rr.setName(r.getNameRoles());
                 rr.setDescription(r.getDescription());
-
-                // 3.3 Map permissions của từng Role
                 Set<PermissionResponse> permDtos = new LinkedHashSet<>();
                 Set<Permission> perms = (r.getPermissions() != null) ? r.getPermissions() : java.util.Set.of();
 
@@ -77,22 +70,13 @@ public class UserController {
                     pr.setDescription(p.getDescription());
                     permDtos.add(pr);
                 }
-
-                // 3.4 Gắn permissions vào role DTO
                 rr.setPermissions(permDtos);
-
-                // 3.5 Thêm role DTO vào tập roleDtos
                 roleDtos.add(rr);
             }
-
-            // 3.6 Gắn roles vào user DTO
             ur.setRoles(roleDtos);
-
-            // 3.7 Thêm user DTO vào kết quả
             result.add(ur);
         }
 
-        // [4] Trả kết quả
         return result;
     }
 

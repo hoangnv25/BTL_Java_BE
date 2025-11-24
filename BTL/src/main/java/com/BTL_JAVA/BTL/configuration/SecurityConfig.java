@@ -71,7 +71,8 @@ public class SecurityConfig {
                         .requestMatchers("/topic/**").permitAll()
                         .requestMatchers("/app/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/payment_infor").permitAll()
-                        .requestMatchers("/api/payment/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/payment/*/status").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/payment/**").authenticated()
                         .anyRequest().authenticated()
                 );
 //                .httpBasic(Customizer.withDefaults())  // bật Basic Auth
