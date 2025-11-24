@@ -35,7 +35,7 @@ public class Order {
     @Column(name = "full_address", nullable = false, length = 500)
     String fullAddress;
 
-    @Column(name = "phone_number", length = 20, nullable = false)
+    @Column(name = "phone_number", length = 20, nullable = true)
     String phoneNumber;
 
     @Column(columnDefinition = "TEXT")
