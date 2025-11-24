@@ -54,27 +54,20 @@ public class FeedbackService {
     @Transactional
     public FeedbackResponse createFeedback(Integer productId, FeedbackRequest request) {
         User user = getCurrentAuthenticatedUser();
-        
-        log.info("User {} creating feedback for product {}", user.getId(), productId);
 
-        // Kiểm tra product có tồn tại
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // Kiểm tra user đã feedback cho product này chưa
         if (feedbackRepository.hasUserFeedbackedProduct(user.getId(), productId)) {
             throw new AppException(ErrorCode.ALREADY_FEEDBACKED);
         }
 
-        // Kiểm tra user đã mua product chưa (optional - có thể bật/tắt)
         boolean hasPurchased = feedbackRepository.hasUserPurchasedProduct(user.getId(), productId);
         if (!hasPurchased) {
-            log.warn("User {} hasn't purchased product {} but creating feedback", user.getId(), productId);
-            // Có thể throw exception hoặc cho phép feedback
-            // throw new AppException(ErrorCode.UNAUTHORIZED);
+            log.info("User {} has not purchased product {}", user.getId(), productId);
+            throw new AppException(ErrorCode.UNAUTHORIZED);
         }
 
-        // Tạo feedback
         Feedback feedback = Feedback.builder()
                 .user(user)
                 .product(product)
@@ -229,6 +222,7 @@ public class FeedbackService {
                 .id(feedback.getId())
                 .userId(feedback.getUser().getId())
                 .userFullName(feedback.getUser().getFullName())
+                .avatar(feedback.getUser().getAvatar())
                 .productId(feedback.getProduct().getProductId())
                 .productName(feedback.getProduct().getTitle())
                 .rating(feedback.getRating())
