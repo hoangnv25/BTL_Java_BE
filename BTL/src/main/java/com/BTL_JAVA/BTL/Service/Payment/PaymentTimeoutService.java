@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,21 +25,32 @@ public class PaymentTimeoutService {
 
     @Scheduled(fixedRate = 60000) // 1 phút chạy 1 lần
     public void checkExpiredPayments() {
+
         LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
 
-        List<Payment> expiredPayments = paymentRepository
+        List<Payment> pendingExpired = paymentRepository
                 .findByStatusAndPaymentMethodAndCreatedDateBefore(
                         PaymentStatus.PENDING,
                         "VNPAY",
                         fifteenMinutesAgo
                 );
+        List<Payment> failedPayments = paymentRepository
+                .findByStatusAndPaymentMethod(
+                        PaymentStatus.FAILED
+                );
+
+        List<Payment> expiredPayments = new ArrayList<>();
+        expiredPayments.addAll(pendingExpired);
+        expiredPayments.addAll(failedPayments);
 
         for (Payment payment : expiredPayments) {
             Order order = payment.getOrder();
             order.setStatus(OrderStatus.CANCELED);
             payment.setStatus(PaymentStatus.FAILED);
+
             paymentRepository.save(payment);
             orderRepository.save(order);
         }
     }
 }
+
