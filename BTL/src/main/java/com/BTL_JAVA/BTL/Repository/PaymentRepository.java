@@ -25,7 +25,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
             LocalDateTime createdDate
     );
 
-    List<Payment> findByStatusAndPaymentMethod(
+    List<Payment> findByStatus(
             PaymentStatus status
     );
     

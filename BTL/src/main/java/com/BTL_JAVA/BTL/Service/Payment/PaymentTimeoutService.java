@@ -35,7 +35,7 @@ public class PaymentTimeoutService {
                         fifteenMinutesAgo
                 );
         List<Payment> failedPayments = paymentRepository
-                .findByStatusAndPaymentMethod(
+                .findByStatus(
                         PaymentStatus.FAILED
                 );
 
