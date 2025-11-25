@@ -14,6 +14,7 @@ public class FeedbackResponse {
     Integer id;
     Integer userId;
     String userFullName;
+    String avatar;
     Integer productId;
     String productName;
     Integer rating;
