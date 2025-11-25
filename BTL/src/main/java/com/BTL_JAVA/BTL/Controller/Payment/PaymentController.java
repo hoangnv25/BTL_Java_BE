@@ -251,16 +251,20 @@ public class PaymentController {
 
                 vnpayApiResponse.setCode("OK");
                 vnpayApiResponse.setMessage("Thanh toán thành công! Đơn hàng #" + order.getId() + " đã được xác nhận.");
+                vnpayApiResponse.setData("Vui lòng quay lại website để kiểm tra thông tin đơn hàng");
 
             } else {
                 // THANH TOÁN THẤT BẠI - HUỶ ORDER
                 payment.setStatus(PaymentStatus.FAILED);
+                order.setStatus(OrderStatus.CANCELED);
                 payment.setResponseData(allParams.toString());
                 paymentRepository.save(payment);
+                orderRepository.save(order);
                 cancelOrderAndRestoreStock(order);
 
                 vnpayApiResponse.setCode("NO");
                 vnpayApiResponse.setMessage("Thanh toán thất bại! Đơn hàng #" + order.getId() + " đã bị huỷ. Mã lỗi: " + responseCode);
+                vnpayApiResponse.setData("Vui lòng quay lại website để đặt lại đơn hàng");
             }
 
         } catch (Exception e) {
