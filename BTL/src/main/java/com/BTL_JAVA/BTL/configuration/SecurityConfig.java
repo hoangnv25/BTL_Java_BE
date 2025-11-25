@@ -97,6 +97,7 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOrigin("https://lok-fe.vercel.app");  // FE React
             config.addAllowedOrigin("http://localhost:5173");  // FE React
+            config.addAllowedOrigin("https://fashco.vercel.app");  // FE React
             config.addAllowedHeader("*");
             config.addAllowedMethod("*");
             config.setAllowCredentials(true);
