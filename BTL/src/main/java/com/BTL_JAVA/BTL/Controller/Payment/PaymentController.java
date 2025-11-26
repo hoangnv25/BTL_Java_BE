@@ -251,7 +251,7 @@ public class PaymentController {
                 orderRepository.save(order);
 
                 // Redirect với tham số thành công
-                redirectUrl += "?payment=success&orderId=" + order.getId();
+                redirectUrl += "?payment=success";
 
             } else {
                 // THANH TOÁN THẤT BẠI
@@ -263,7 +263,7 @@ public class PaymentController {
                 cancelOrderAndRestoreStock(order);
 
                 // Redirect với tham số thất bại
-                redirectUrl += "?payment=failed&orderId=" + order.getId() + "&errorCode=" + responseCode;
+                redirectUrl += "?payment=failed" + "&errorCode=" + responseCode;
             }
 
         } catch (Exception e) {
