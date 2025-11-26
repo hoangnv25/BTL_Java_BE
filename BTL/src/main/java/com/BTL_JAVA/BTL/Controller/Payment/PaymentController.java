@@ -14,12 +14,14 @@ import com.BTL_JAVA.BTL.enums.OrderStatus;
 import com.BTL_JAVA.BTL.enums.PaymentStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -223,14 +225,13 @@ public class PaymentController {
 
     @Transactional
     @GetMapping("/payment_infor")
-    public ResponseEntity<?> paymentInfor(
-            @RequestParam Map<String, String> allParams) {
+    public ResponseEntity<?> paymentInfor(@RequestParam Map<String, String> allParams) {
 
         String responseCode = allParams.get("vnp_ResponseCode");
         String vnpayTransactionRef = allParams.get("vnp_TxnRef");
         String transactionNo = allParams.get("vnp_TransactionNo");
 
-        VNPayApiResponse vnpayApiResponse = new VNPayApiResponse();
+        String redirectUrl = "https://fashco.vercel.app/user";
 
         try {
             Payment payment = paymentRepository.findByVnpayTransactionRef(vnpayTransactionRef)
@@ -249,12 +250,11 @@ public class PaymentController {
                 order.setStatus(OrderStatus.APPROVED);
                 orderRepository.save(order);
 
-                vnpayApiResponse.setCode("OK");
-                vnpayApiResponse.setMessage("Thanh toán thành công! Đơn hàng #" + order.getId() + " đã được xác nhận.");
-                vnpayApiResponse.setData("Vui lòng quay lại website để kiểm tra thông tin đơn hàng");
+                // Redirect với tham số thành công
+                redirectUrl += "?payment=success&orderId=" + order.getId();
 
             } else {
-                // THANH TOÁN THẤT BẠI - HUỶ ORDER
+                // THANH TOÁN THẤT BẠI
                 payment.setStatus(PaymentStatus.FAILED);
                 order.setStatus(OrderStatus.CANCELED);
                 payment.setResponseData(allParams.toString());
@@ -262,17 +262,19 @@ public class PaymentController {
                 orderRepository.save(order);
                 cancelOrderAndRestoreStock(order);
 
-                vnpayApiResponse.setCode("NO");
-                vnpayApiResponse.setMessage("Thanh toán thất bại! Đơn hàng #" + order.getId() + " đã bị huỷ. Mã lỗi: " + responseCode);
-                vnpayApiResponse.setData("Vui lòng quay lại website để đặt lại đơn hàng");
+                // Redirect với tham số thất bại
+                redirectUrl += "?payment=failed&orderId=" + order.getId() + "&errorCode=" + responseCode;
             }
 
         } catch (Exception e) {
-            vnpayApiResponse.setCode("ERROR");
-            vnpayApiResponse.setMessage("Lỗi xử lý: " + e.getMessage());
+            // Redirect với tham số lỗi
+            redirectUrl += "?payment=error&message=" + e.getMessage();
         }
 
-        return ResponseEntity.ok().body(vnpayApiResponse);
+        // THỰC HIỆN REDIRECT
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(redirectUrl))
+                .build();
     }
 
     @PutMapping("/{paymentId}/status")
