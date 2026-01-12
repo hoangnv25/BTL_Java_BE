@@ -222,13 +222,27 @@ server.port=8080
 
 # MySQL Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/java_db
-spring.datasource.username=<db_user> nhớ sửa :v
-spring.datasource.password=<db_pass> nhớ sửa :v
+spring.datasource.username=root
+spring.datasource.password=12345
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-# Database sẽ được import thủ công bằng SQL Workbench (không auto init)
+# ===================== JWT =====================
+jwt.signerKey=sigerKey_cua_toi
+jwt.valid-duration=3600 
+jwt.refresh-duration=36000 
+TZ="Asia/Ho_Chi_Minh"
+
+
+# ===================== outbound (không dùng tới tính năng nhưng phải có để đọc) =====================
+outbound.identity.google.client-id="random-oogpvtn4a.apps.googleusercontent.com"
+outbound.identity.google.client-secret="randomGOPX-fri3"
+outbound.identity.redirect-uri="http://localhost:5173/auth/OAuth"
+
+# ===================== more =====================
 spring.sql.init.mode=never
-spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
 ```
 
 **Thay thế các giá trị:**
