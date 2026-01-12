@@ -222,8 +222,8 @@ server.port=8080
 
 # MySQL Configuration
 spring.datasource.url=jdbc:mysql://localhost:3306/java_db
-spring.datasource.username=root
-spring.datasource.password=12345
+spring.datasource.username=<db_user> 
+spring.datasource.password=<db_pass>
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 # ===================== JWT =====================
