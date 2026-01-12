@@ -1,4 +1,12 @@
 # BTL Java Backend
+Dự án gồm 2 repo, file readme viết chung cho cả dự án. 
+
+Nhóm tác giả:
+- Vũ Anh Tuấn
+- Đinh Việt Dũng
+- Nguyễn Vĩnh Trung
+- Nguyễn Vĩnh Tùng
+- Nguyễn Văn Hoàng
 
 ## Mục lục
 
@@ -165,6 +173,7 @@ Hệ thống cung cấp quy trình khép kín từ tìm kiếm sản phẩm, đ�
 
 
 ## 4. Front End
+Xem tại [Github](https://github.com/hoangnv25/BTL_Java_FE)
 
 ## 5. Hướng dẫn cài đặt và chạy dự án
 
@@ -237,7 +246,7 @@ spring.jpa.hibernate.ddl-auto=validate
 1. Mở dự án trong IDE (IntelliJ IDEA / Eclipse)
 2. Tìm đến file: `BTL/src/main/java/com/BTL_JAVA/BTL/BtlApplication.java`
 3. Chạy file `BtlApplication.java` (Run/Debug)
-4. Backend sẽ chạy tại: `http://localhost:8080`
+4. Backend sẽ chạy tại: [http://localhost:8080](http://localhost:8080)
 
 ### 🧪 Bước 3: Kiểm tra API với Postman 
 Bước này để kiểm tra xem hệ thống bao gồm BE và DB đã hoạt động trơn tru chưa, có nhiều cách kiểm tra, dưới đây là dùng Postman. 
