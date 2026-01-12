@@ -304,6 +304,10 @@ Sau khi hoàn thành tất cả các bước trên, bạn đã có:
 - ✅ Backend API chạy tại `http://localhost:8080`
 - ✅ Frontend chạy tại `http://localhost:5173` và có thể tương tác với Backend qua giao diện người dùng
 
+### Tài khoản
+- Quản trị: Tài khoản: `admin`, mật khẩu `admin`
+- Người dùng: Tạo mới hoặc Tài khoản: `hoang`, mật khẩu `hoang`
+
 ## 6. Lưu ý
 
 - **Báo cáo dự án**: file `Báo cáo BTL Java.pdf` trong thư mục chính của dự án phần Backend
