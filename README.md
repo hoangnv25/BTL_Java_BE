@@ -3,9 +3,12 @@
 ## Mục lục
 
 1. [Giới thiệu dự án](#1-giới-thiệu-dự-án)
-2. [Chi tiết BE](#2-chi-tiết-be)
-3. [Chi tiết FE](#3-chi-tiết-fe)
-4. [Hướng dẫn cài đặt và chạy dự án](#4-hướng-dẫn-cài-đặt-và-chạy-dự-án)
+2. [Thiết kế Database](#2-thiết-kế-database)
+3. [Back End](#3-back-end)
+   - [3.1 Công nghệ](#31-công-nghệ)
+   - [3.2 API](#32-api)
+4. [Front End](#4-front-end)
+5. [Hướng dẫn cài đặt và chạy dự án](#5-hướng-dẫn-cài-đặt-và-chạy-dự-án)
 
 
 ---
@@ -31,7 +34,7 @@ Hệ thống cung cấp quy trình khép kín từ tìm kiếm sản phẩm, đ�
 - **Tài khoản & Bảo mật**: Đăng ký/Đăng nhập (OAuth2/Google) và quản lý hồ sơ
 - **Mua sắm**: Tìm kiếm, lọc đa tiêu chí, xem biến thể (màu sắc, kích thước), quản lý giỏ hàng
 - **Thanh toán**: Thanh toán trực tuyến qua VNPay và theo dõi đơn hàng real-time
-- **Chat**: Hệ thống chat trực tuyến với Admin
+- **Chat**: Hệ thống chat real-time với Admin
 
 #### 🛠 Dành cho Quản trị viên
 - **Dashboard**: Báo cáo doanh thu, đơn hàng và hiệu suất kinh doanh
@@ -60,11 +63,110 @@ Hệ thống cung cấp quy trình khép kín từ tìm kiếm sản phẩm, đ�
 - **Frontend**: Vercel
 - **Backend & Database**: Railway (CI/CD tự động)
 
-## 2. Chi tiết BE
+## 2. Thiết kế Database
 
-## 3. Chi tiết FE
+![ahd](/readmeIMG/BTL_JAVA_ER.png)
+## 3. Back End
 
-## 4. Hướng dẫn cài đặt và chạy dự án
+### 3.1 Công nghệ
+
+**Framework & Core:**
+- Spring Boot (RESTful API)
+- Spring Security với JWT (JSON Web Token) cho xác thực và phân quyền
+- OAuth2/Google Login cho đăng nhập nhanh
+- WebSocket/Socket.IO cho Chat real-time
+
+**Tích hợp dịch vụ:**
+- **Cloudinary**: Upload và lưu trữ ảnh, trả về URL để lưu trong Database
+- **VNPay Sandbox**: Tích hợp cổng thanh toán trực tuyến (môi trường test)
+
+**Database & ORM:**
+- MySQL với JPA/Hibernate
+- CRUD tiêu chuẩn cho tất cả các entity
+
+### 3.2 API
+
+**Authentication & Authorization:**
+- `POST /auth/token` - Đăng nhập (Admin/User)
+- `POST /auth/introspect` - Xác thực token
+- `POST /auth/refresh` - Làm mới token
+- `POST /auth/logout` - Đăng xuất
+- `GET /users` - Lấy danh sách users
+- `POST /user` - Tạo user mới
+- `PUT /users/{id}` - Cập nhật user
+- `GET /users/myInfor` - Lấy thông tin cá nhân
+- `POST /permissions` - Tạo permission
+- `GET /permissions` - Lấy danh sách permissions
+- `POST /roles` - Tạo role
+- `DELETE /roles/{name}` - Xóa role
+
+**Category:**
+- `GET /category` - Lấy danh sách category
+- `POST /category` - Tạo category
+- `PUT /category/{id}` - Cập nhật category
+- `DELETE /category/{id}` - Xóa category
+
+**Product:**
+- `GET /products` - Lấy danh sách sản phẩm
+- `POST /products` - Tạo sản phẩm
+- `PUT /products/{id}` - Cập nhật sản phẩm
+- `GET /products/search` - Tìm kiếm sản phẩm (keyword, price range, colors)
+
+**Product Variation:**
+- `POST /variations` - Tạo biến thể sản phẩm (size, color, stock)
+- `GET /variations/{id}` - Lấy thông tin biến thể
+- `PUT /variations/{id}` - Cập nhật biến thể
+
+**Reviews:**
+- `POST /reviews` - Tạo đánh giá
+- `GET /reviews` - Lấy tất cả đánh giá
+- `PUT /reviews/{id}` - Cập nhật đánh giá
+- `DELETE /reviews/{id}` - Xóa đánh giá
+- `GET /reviews/user/{userId}` - Lấy đánh giá theo user
+- `GET /reviews/rating/{rating}` - Lấy đánh giá theo rating
+- `GET /reviews/rating/min/{minRating}` - Lấy đánh giá từ rating tối thiểu
+
+**Cart:**
+- `POST /cart/add` - Thêm sản phẩm vào giỏ hàng
+- `GET /cart` - Lấy giỏ hàng
+- `PUT /cart/update/{id}` - Cập nhật số lượng
+- `DELETE /cart/remove/{id}` - Xóa sản phẩm khỏi giỏ hàng
+
+**Order:**
+- `POST /orders` - Tạo đơn hàng
+- `GET /orders` - Lấy đơn hàng của user
+- `GET /all-orders` - Lấy tất cả đơn hàng (Admin)
+- `PATCH /orders/{id}/cancel` - Hủy đơn hàng
+- `PATCH /orders/{id}/status` - Cập nhật trạng thái đơn hàng
+- `DELETE /orders/{id}` - Xóa đơn hàng
+
+**Feedback:**
+- `GET /feedback/{orderId}` - Lấy feedback theo đơn hàng
+- `POST /feedback/{orderId}` - Tạo feedback
+- `DELETE /feedback/{orderId}/{feedbackId}` - Xóa feedback
+
+**Sales:**
+- `POST /sales` - Tạo đợt khuyến mãi
+- `PUT /sales/{id}` - Cập nhật khuyến mãi
+- `GET /sales` - Lấy danh sách khuyến mãi
+- `DELETE /sales/{id}` - Xóa khuyến mãi
+
+**Address:**
+- `POST /address` - Tạo địa chỉ
+- `PUT /address/{id}` - Cập nhật địa chỉ
+- `GET /address` - Lấy danh sách địa chỉ
+- `GET /address/default` - Lấy địa chỉ mặc định
+
+**Chat:**
+- `POST /chat/conversations/ensure` - Tạo/đảm bảo conversation
+- `POST /chat/messages` - Gửi tin nhắn
+- `GET /chat/conversations` - Lấy danh sách conversation
+- `GET /chat/conversations/{id}` - Lấy chi tiết conversation
+
+
+## 4. Front End
+
+## 5. Hướng dẫn cài đặt và chạy dự án
 
 ### 📋 Yêu cầu hệ thống
 
