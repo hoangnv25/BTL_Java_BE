@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "aec1326c-bf7a-410e-aaaf-0798c41ac925",
+		"_postman_id": "5e118628-aec6-4130-8ed3-d8c69bb4a274",
 		"name": "BTL_JAVA",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49055290",
-		"_collection_link": "https://lok888.postman.co/workspace/Lok-Workspace~0466b2dc-60a4-4f08-8566-fc823c90741b/collection/39282105-aec1326c-bf7a-410e-aaaf-0798c41ac925?action=share&source=collection_link&creator=49055290"
+		"_exporter_id": "49898037"
 	},
 	"item": [
 		{
@@ -428,7 +427,10 @@
 					"name": "get role Copy",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -576,14 +578,7 @@
 					},
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkZXZ0ZWlyYS5jb20iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTc2MDkwNzEzNiwiaWF0IjoxNzYwOTAzNTM2LCJqdGkiOiI5OWUzYTkxNy1lODBhLTQ5NGYtYTY1Zi0yNTJkYTY4NjE4MmQiLCJzY29wZSI6IiJ9.tZR7_1gyVvi4xHO5rscqn3Zw5WgQBVkcqqS2G8Tyusn6tZrGHr7MRgIYZ76gPHSg6qX7wCH3Lvlla5N4-o1rTQ",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -797,14 +792,7 @@
 					},
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkZXZ0ZWlyYS5jb20iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTc2MDI1MDgyNSwiaWF0IjoxNzYwMjQ3MjI1LCJqdGkiOiIxYWFiMTYwMC05YzQ1LTQ4ZTAtYTYzZC01NTkwNDIzMzNhZTQiLCJzY29wZSI6IlJPTEVfQURNSU4ifQ.x4QVGkLtTYgK2BMiZfUe49v6FJSOADZmnDNKaOwC6Jm08Be9iYOeKJXdj70BPM8U9iDFx5q1hA6VA0bCnVku0w",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1089,14 +1077,7 @@
 					},
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkZXZ0ZWlyYS5jb20iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTc2MDkwNzEzNiwiaWF0IjoxNzYwOTAzNTM2LCJqdGkiOiI5OWUzYTkxNy1lODBhLTQ5NGYtYTY1Zi0yNTJkYTY4NjE4MmQiLCJzY29wZSI6IiJ9.tZR7_1gyVvi4xHO5rscqn3Zw5WgQBVkcqqS2G8Tyusn6tZrGHr7MRgIYZ76gPHSg6qX7wCH3Lvlla5N4-o1rTQ",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1242,14 +1223,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "get product",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
 				}
 			]
 		},
@@ -1334,14 +1307,7 @@
 					},
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkZXZ0ZWlyYS5jb20iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTc2MDEwOTQyMCwiaWF0IjoxNzYwMTA1ODIwLCJqdGkiOiIwYzY3MDUxYi1lN2Q1LTRhY2QtYmNiNy01OThhMmJlNWY1NGIiLCJzY29wZSI6IlJPTEVfQURNSU4ifQ.cPhu9ZLL41zVgnjOXJjt4Z56LPDl-pNebRj756iegd_AmUk60GfqEaYo8A4Sw9fjh4NyfQ0qgi-SRqKsqnB_MA",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -1568,7 +1534,10 @@
 					"name": "Update Order",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -1997,8 +1966,14 @@
 				{
 					"name": "Get all sales",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -2118,7 +2093,10 @@
 					"name": "get address",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -2126,7 +2104,10 @@
 					"name": "Address default",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}
@@ -2219,7 +2200,10 @@
 					"name": "get full message conversation",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -2227,7 +2211,10 @@
 					"name": "get full conversation by id",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}
