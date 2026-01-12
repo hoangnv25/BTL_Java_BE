@@ -185,6 +185,13 @@ Xem tại [Github](https://github.com/hoangnv25/BTL_Java_FE)
 - **IDE**: IntelliJ IDEA / Eclipse / VS Code
 - **Postman**: Để test API (tùy chọn)
 
+### Bước 0: Clone source code
+```bash
+git clone https://github.com/hoangnv25/BTL_Java_BE.git
+```
+
+Hoặc tải file ZIP từ GitHub và giải nén.
+
 ### 🗄️ Bước 1: Cài đặt Database
 
 1. **Tải và cài đặt MySQL Workbench**
@@ -202,16 +209,8 @@ Xem tại [Github](https://github.com/hoangnv25/BTL_Java_FE)
 
 ### ⚙️ Bước 2: Cài đặt Backend
 
-#### 2.1. Clone source code
-
-```bash
-git clone https://github.com/hoangnv25/BTL_Java_BE.git
-```
-
-Hoặc tải file ZIP từ GitHub và giải nén.
-
-#### 2.2. Cấu hình Backend
-
+#### 2.1. Cấu hình Backend
+Mở dự án trong 1 IDE (IntelliJ, Netbeans...)
 **Lưu ý**: File `application.properties` chứa thông tin cấu hình theo máy (DB username/password) nên **không được commit lên GitHub** (đã được thêm vào `.gitignore`). Bạn cần tự tạo file này.
 
 **Tạo file cấu hình:**
@@ -233,16 +232,15 @@ spring.jpa.hibernate.ddl-auto=validate
 ```
 
 **Thay thế các giá trị:**
-- `java_db`: Tên schema đã tạo khi chạy scrip trên workbench hồi nãy
+- `java_db`: Tên schema đã tạo khi chạy scrip trên workbench hồi nãy, đừng sửa cái này nếu nãy không sửa
 - `<db_user>`: Username MySQL của bạn
 - `<db_pass>`: Password MySQL của bạn
 
 #### 2.3. Chạy Backend
 
-1. Mở dự án trong IDE (IntelliJ IDEA / Eclipse)
-2. Tìm đến file: `BTL/src/main/java/com/BTL_JAVA/BTL/BtlApplication.java`
-3. Chạy file `BtlApplication.java` (Run/Debug)
-4. Backend sẽ chạy tại: [http://localhost:8080](http://localhost:8080)
+1. Tìm đến file: `BTL/src/main/java/com/BTL_JAVA/BTL/BtlApplication.java`
+2. Chạy file `BtlApplication.java` (Run/Debug)
+3. Backend sẽ chạy tại: [http://localhost:8080](http://localhost:8080)
 
 ### 🧪 Bước 3: Kiểm tra API với Postman 
 Bước này để kiểm tra xem hệ thống bao gồm BE và DB đã hoạt động trơn tru chưa, có nhiều cách kiểm tra, dưới đây là dùng Postman. 
