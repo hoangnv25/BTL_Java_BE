@@ -202,8 +202,8 @@ Hoặc tải file ZIP từ GitHub và giải nén.
    - Tạo một kết nối mặc định với MySQL Server
 
 3. **Import Database**
-   - Tìm file `DB_Java.sql` ở thư mục gốc của dự án
-   - Mở file `DB_Java.sql` trên MySQL Workbench
+   - Tìm file `DB_JAVA.sql` ở thư mục gốc của dự án
+   - Mở file `DB_JAVA.sql` trên MySQL Workbench
    - Chạy toàn bộ script SQL
    - Click **Reload** và kiểm tra xem vừa có Schema mới tên là `java_db` vừa được tạo với rất nhiều bảng và dữ liệu trong bảng chưa.
 
@@ -241,8 +241,9 @@ spring.jpa.hibernate.ddl-auto=validate
 1. Tìm đến file: `BTL/src/main/java/com/BTL_JAVA/BTL/BtlApplication.java`
 2. Chạy file `BtlApplication.java` (Run/Debug)
 3. Backend sẽ chạy tại: [http://localhost:8080](http://localhost:8080)
+4. Kiểm tra bằng cách truy cập link [http://localhost:8080/products](http://localhost:8080/products), nếu trả về rất nhiều dòng json dữ liệu thì thành công, nếu chưa thì hãy kiểm tra lại.
 
-### 🧪 Bước 3: Kiểm tra API với Postman 
+### 🧪 Bước 3: Kiểm tra API với Postman (bỏ qua nếu không thích)
 Bước này để kiểm tra xem hệ thống bao gồm BE và DB đã hoạt động trơn tru chưa, có nhiều cách kiểm tra, dưới đây là dùng Postman. 
 Hướng dẫn dưới dây sẽ import tất cả API mà chúng tôi có lên Postman để kiểm thử.
 
