@@ -194,15 +194,11 @@ Xem tại [Github](https://github.com/hoangnv25/BTL_Java_FE)
    - Mở MySQL Workbench
    - Tạo một kết nối mặc định với MySQL Server
 
-3. **Tạo Schema**
-   - Tạo một schema mới (ví dụ: `btl_java`)
-
-4. **Import Database**
-   - Tìm file `DB_JAVA.sql` ở thư mục gốc của dự án
-   - Mở file `DB_JAVA.sql` trên MySQL Workbench
-   - Thêm dòng `USE btl_java;` lên trên cùng của file
+3. **Import Database**
+   - Tìm file `DB_Java.sql` ở thư mục gốc của dự án
+   - Mở file `DB_Java.sql` trên MySQL Workbench
    - Chạy toàn bộ script SQL
-   - Click **Reload** và kiểm tra các bảng đã có dữ liệu
+   - Click **Reload** và kiểm tra xem vừa có Schema mới tên là `java_db` vừa được tạo với rất nhiều bảng và dữ liệu trong bảng chưa.
 
 ### ⚙️ Bước 2: Cài đặt Backend
 
@@ -226,9 +222,9 @@ Tạo file tại đường dẫn: `BTL/src/main/resources/application.properties
 server.port=8080
 
 # MySQL Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/<db_name>
-spring.datasource.username=<db_user>
-spring.datasource.password=<db_pass>
+spring.datasource.url=jdbc:mysql://localhost:3306/java_db
+spring.datasource.username=<db_user> nhớ sửa :v
+spring.datasource.password=<db_pass> nhớ sửa :v
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 # Database sẽ được import thủ công bằng SQL Workbench (không auto init)
@@ -237,7 +233,7 @@ spring.jpa.hibernate.ddl-auto=validate
 ```
 
 **Thay thế các giá trị:**
-- `<db_name>`: Tên schema đã tạo (ví dụ: `btl_java`)
+- `java_db`: Tên schema đã tạo khi chạy scrip trên workbench hồi nãy
 - `<db_user>`: Username MySQL của bạn
 - `<db_pass>`: Password MySQL của bạn
 
@@ -309,4 +305,11 @@ Sau khi hoàn thành tất cả các bước trên, bạn đã có:
 - ✅ Backend API chạy tại `http://localhost:8080`
 - ✅ Frontend chạy tại `http://localhost:5173` và có thể tương tác với Backend qua giao diện người dùng
 
-Bạn có thể bắt đầu sử dụng hệ thống FASHCO!
+## 6. Lưu ý
+
+- **Báo cáo dự án**: file `Báo cáo BTL Java.pdf` trong thư mục chính của dự án phần Backend
+- **Mục đích**: Dự án được phát triển phục vụ mục đích học tập, không vì mục đích thương mại
+- **Tích hợp dịch vụ**: 
+  - OAuth2 Google và VNPay yêu cầu cấu hình credentials/API keys riêng. Khi clone dự án về, bạn cần tự cấu hình các thông tin này trong file cấu hình để các tính năng này hoạt động
+  - Tham khảo tài liệu của Google OAuth2 và VNPay Sandbox để thiết lập
+- **Hình ảnh**: Các hình ảnh sản phẩm trong dự án được tham khảo từ các website thương mại điện tử, chỉ sử dụng cho mục đích học tập và demo
