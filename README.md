@@ -202,8 +202,8 @@ Hoặc tải file ZIP từ GitHub và giải nén.
    - Tạo một kết nối mặc định với MySQL Server
 
 3. **Import Database**
-   - Tìm file `DB_Java.sql` ở thư mục gốc của dự án
-   - Mở file `DB_Java.sql` trên MySQL Workbench
+   - Tìm file `DB_JAVA.sql` ở thư mục gốc của dự án
+   - Mở file `DB_JAVA.sql` trên MySQL Workbench
    - Chạy toàn bộ script SQL
    - Click **Reload** và kiểm tra xem vừa có Schema mới tên là `java_db` vừa được tạo với rất nhiều bảng và dữ liệu trong bảng chưa.
 
